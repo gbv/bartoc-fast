@@ -1,0 +1,2 @@
+use pip like so: $ py -3.7 -m pip install foo
+start server: $ py -3.7 server.py runserver
