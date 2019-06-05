@@ -4,6 +4,7 @@
 ##DATA:
 
 #Skosmos REST API instances:
+#structure: [[url_1, name_1], [url_2, name_2]]
 skosmosinstances = [
     ["http://agrovoc.uniroma2.it/agrovoc", "AgroVoc"],
     ["https://bartoc-skosmos.unibas.ch", "Bartoc"],

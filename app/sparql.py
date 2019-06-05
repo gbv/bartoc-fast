@@ -74,36 +74,3 @@ class SparqlQuery:
 
     def reset(self):
         self.query = self.unmodified
-
-
-##COMMENTS:
-#to do
-#function foo(searchword, sparqlquery) that returns sparqlquery on searchword as JSON; perhaps as method of a class
-#function that retrieves relevant information from JSON; in other words, build GraphQL schema from JSON; what is datastructure of JSON?
-#unite skosmos and sparql results
-
-#todo general:
-#1. timeout for queries that take too long
-
-
-##TESTER:
-def test():
-    a = SparqlDatabase([])
-    a.setup()
-    print (a.get_entries())
-
-def test2():
-    a = SparqlDatabase([]).setup()
-    print (a.get_entries())
-
-def test3(searchword, queryname):#visualizes data structure
-    base = SparqlDatabase([])
-    endpoints = base.get_entries()
-    print (endpoints)
-    for endpoint in endpoints:
-        print (endpoint)
-        print (endpoint.get_queries())
-        print (endpoint.search(searchword, queryname))
-        print (endpoint.search2(searchword, queryname))
-
-#a = test3("lambda", "http://vocab.getty.edu/queries#Full_Text_Search_Query")

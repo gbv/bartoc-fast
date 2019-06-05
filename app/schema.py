@@ -1,5 +1,4 @@
 ##DEPENDENDIES:
-
 import graphene
 import time
 from multiprocessing import Pool
@@ -180,55 +179,8 @@ def rest_resolver(data):
 def get_skos():
     return [u'uri',u'type' u'prefLabel', u'altLabel', u'hiddenLabel', u'lang', u'notation', u'vocab', u'exvocab']
 
-
-##TESTER:
-
-#prints result of query which is written in GraphQL syntax
-
-def test():
-    test1()
-    test2()
-    
-def test1():
-    query = """{resultsParallel(searchword:"rennrad") {
-  uri
-  kind
-  preflabel
-  altlabel
-  hiddenlabel
-  lang
-  notation
-  vocab
-  exvocab
-}}"""
-    result = schema.execute(query)
-    print (result.data)
-
-def test2():
-    query = """{resultsMulti(searchword:"rennrad", language:"de") {
-  uri
-  kind
-  preflabel
-  altlabel
-  hiddenlabel
-  lang
-  notation
-  vocab
-  exvocab
-}}"""
-    result = schema.execute(query)
-    print (result.data)
-
-def sparql_test(searchword, queryname):
-    base = sparql.SparqlDatabase([])
-    endpoints = base.get_entries()
-    for endpoint in endpoints:
-        jsondata = endpoint.search(searchword, queryname)
-        test = normalize_sparql(jsondata)
-         
 ##MAIN:
 
 schema = graphene.Schema(query=Query)
-#test()
-#sparql_test("lambda", "http://vocab.getty.edu/queries#Full_Text_Search_Query")
+
 
