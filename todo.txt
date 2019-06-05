@@ -1,0 +1,7 @@
+
+
+1. Unite sparql and skosmos results in one graphene.ObjectType
+
+
+
+2. Build function to time out queries (either skosmos or sparql) that take too long; e.g., send test query to server all x minutes and ban servers that take too long for y minutes.
