@@ -1,3 +1,22 @@
+##DEPENDENCIES:
+import sys
+sys.path.append('//itsc-pg2.storage.p.unibas.ch/ub-home$/hinder0000/Documents/GitHub/bartoc-graphql/app')
+#local:
+import schema
+import skosmos
+import sparql
+
+def sparql_test(searchword, queryname):
+    base = sparql.SparqlDatabase([])
+    endpoints = base.get_entries()
+    for endpoint in endpoints:
+        jsondata = endpoint.search(searchword, queryname)
+        test = schema.normalize_sparql(jsondata)
+        print (test)
+
+sparql_test("lambda", "http://vocab.getty.edu/queries#Full_Text_Search_Query")
+
+
 """sparql.py:
 def test():
     a = SparqlDatabase([])
@@ -30,7 +49,7 @@ def test():
     test2()
     
 def test1():
-    query = """{resultsParallel(searchword:"rennrad") {
+    query = ""{resultsParallel(searchword:"rennrad") {
   uri
   kind
   preflabel
@@ -40,12 +59,12 @@ def test1():
   notation
   vocab
   exvocab
-}}"""
+}}""
     result = schema.execute(query)
     print (result.data)
 
 def test2():
-    query = """{resultsMulti(searchword:"rennrad", language:"de") {
+    query = ""{resultsMulti(searchword:"rennrad", language:"de") {
   uri
   kind
   preflabel
@@ -55,7 +74,7 @@ def test2():
   notation
   vocab
   exvocab
-}}"""
+}}""
     result = schema.execute(query)
     print (result.data)
 

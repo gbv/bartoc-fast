@@ -1,76 +1,66 @@
-##DEPENDENCIES:
-from SPARQLWrapper import SPARQLWrapper, JSON
-#local:
-import data
-import utility
+""" sparql.py """
 
-##CLASSES:
-#a collection of SparqlEndpoints
+from SPARQLWrapper import (SPARQLWrapper, JSON)
+import data     # local
+import utility  # local
+
 class SparqlDatabase(utility.Database):
-    def __init__(self, entries=set):
+    """ A collection of SPARQL endpoints """
+    def __init__(self, entries: set) -> None:
         utility.Database.__init__(self, entries)
-        self.setup() #setup is called on initializing class
+        self.setup() # setup is called on initializing class
 
-    def setup(self):
+    def setup(self) -> None:
+        """ Populates the database with SPARQL endpoints and their queries """
         for entry in data.sparqlendpoints:
-            #entry[2] is {queryname1 : query1, queryname2 : query2, ...}
-            keys = entry[2].keys()
+            keys = entry[2].keys() # entry[2]: {queryname1 : query1, queryname2 : query2, ...}
             queries = {}
             for key in keys:
-                query = SparqlQuery(key, entry[2][key])
-                queries.update( {key : query} ) #queries can be found by their name; but then name attribute for SparqlQuery not really needed
-            point = SparqlEndpoint(entry[1], entry[0], queries) #entry[1] is name, entry[0] is url
+                query = SparqlQuery(entry[2][key])
+                queries.update( {key : query} ) # queries can be found by their name
+            point = SparqlEndpoint(entry[1], entry[0], queries) # entry[0]: url, entry[1]: name 
             self.add_entries(set([point]))
                          
-#an endpoint with a name, url, and query methods
-class SparqlEndpoint:
-    def __init__(self, name=str, url=str, queries=dict):
-        self.name = name
-        self.url = url        
+class SparqlEndpoint(utility.Entry):
+    """ A SPARQL endpoint """
+    def __init__(self, name: str, url: str, queries: dict) -> None:
+        utility.Entry.__init__(self, name, url)   
         self.queries = queries
 
-    def set_url(self, url):
-        self.url = url
-    def get_url(self):
-        return self.url
-
-    def set_name(self, name):
-        self.name = name
-    def get_name(self):
-        return self.name
-
-    def set_queries(self, queries):
+    def set_queries(self, queries: dict) -> None:
         self.queries = queries
-    def get_queries(self):
+
+    def get_queries(self) -> dict:
         return self.queries
 
-    #returns JSON of query named queryname for searchword
-    def search(self, searchword, queryname):
+    def search(self, searchword: str, queryname: str) -> dict:
+        """ Sends a queryname-query for searchword to the SPARQL endpoint and returns the results """
         try:
             query = self.queries[queryname]            
         except KeyError:
             return None
         else:
             query.update(searchword)
-            sparql = SPARQLWrapper(self.url)
-            sparql.setQuery(query.get())
-            sparql.setReturnFormat(JSON)
-            data = sparql.query().convert()
+            sparqlw = SPARQLWrapper(self.url)
+            sparqlw.setQuery(query.get())
+            sparqlw.setReturnFormat(JSON)
+            data = sparqlw.queryAndConvert() # raw JSON not needed, otherwise use: data = sparql.query()
             query.reset()
             return data
             
-#a specific query with a name to be used with a specific endpoint
 class SparqlQuery:
-    def __init__(self, name=str, query=str):
-        self.name = name #no methods needed
+    """ A SPARQL query (to be used with a specific endpoint) """
+    def __init__(self, query: str) -> None:
         self.query = query
         self.unmodified = query
 
-    def get(self):
+    def get(self) -> str:
         return self.query
 
-    def update(self, searchword):
-            self.query = self.query.replace("!!SEARCHWORD!!", searchword)
+    def update(self, searchword: str) -> None:
+        """ Puts the searchword into the query """        
+        self.query = self.query.replace("!!SEARCHWORD!!", searchword)
 
-    def reset(self):
+    def reset(self) -> None:
+        """ Resets to the initial query (w/o searchword) """
         self.query = self.unmodified
