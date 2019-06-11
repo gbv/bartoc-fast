@@ -1,26 +1,27 @@
-##DEPENDENDIES:
+""" schema.py """
+
 import graphene
-import time
 from multiprocessing import Pool
 from multiprocessing.dummy import Pool as ThreadPool
-#local:
-import skosmos
-import sparql
-
-##SCHEMA:
+from typing import List, Set, Dict, Tuple, Optional
+import skosmos  # local
+import sparql   # local
+import time     # development
 
 class SparqlResult(graphene.ObjectType):
+    """ Result of a SPARQL query """
     subject = graphene.String(description='Subject')
     term = graphene.String(description='Term')
     parents = graphene.String(description='Parents')
     descr = graphene.String(description='Descr')
     scopenote = graphene.String(description='ScopeNote')
-    kind = graphene.String(description='Type')
+    type_ = graphene.String(description='Type')
     extrakind = graphene.String(description='ExtraType')
 
 class SkosmosResult(graphene.ObjectType):
+    """ Result of a Skosmos query """
     uri = graphene.String(description='URI')
-    kind = graphene.List(graphene.String, description='type')
+    type_ = graphene.List(graphene.String, description='type')
     preflabel = graphene.String(description='http://www.w3.org/2004/02/skos/core#prefLabel')
     altlabel = graphene.String(description='http://www.w3.org/2004/02/skos/core#altLabel')
     hiddenlabel = graphene.String(description='http://www.w3.org/2004/02/skos/core#hiddenLabel')
@@ -29,157 +30,163 @@ class SkosmosResult(graphene.ObjectType):
     vocab = graphene.String(description='vocabulary')
     exvocab = graphene.String(description='???')
 
-
-##RESOLVER:
-
-class Query(graphene.ObjectType):
-
-#SPARQL:
-
-    results_sparql = graphene.List(SparqlResult,
-                                   searchword=graphene.String(required=True),
-                                   queryname=graphene.String(required=True))
-    def resolve_results_sparql(self, info, searchword, queryname):
-        start = time.time() #timer
-        base = sparql.SparqlDatabase([])
-        endpoints = base.get_entries() #set of SparqlEndpoints
-        data = []
-        for endpoint in endpoints:#aggregate data before or after normalizing??
-            jsondata = endpoint.search(searchword, queryname)
-            normalized = normalize_sparql(jsondata)
-            data = data + normalized
-        end = time.time() #timer
-        print(end - start)#timer
-        return data 
-
-#SKOSMOS:
-
-    results_standard = graphene.List(SkosmosResult,
-                                     searchword=graphene.String(required=True))
-    def resolve_results_standard(self, info, searchword):
-        start = time.time() #timer
-        base = skosmos.SkosmosDatabase([])
-        entries = base.get_entries()
-        data = []
-        for entry in entries:
-            jsondata = entry.search(searchword)
-            results = jsondata[u'results']
-            data = data + results
-        outwithyou = rest_resolver({u'results':data}) #timer, otherwise return rest_resolver({u'results':data})
-        end = time.time() #timer
-        print(end - start)#timer
-        return outwithyou
-
-    results_parallel = graphene.List(SkosmosResult,
-                                     searchword=graphene.String(required=True))
-    def resolve_results_parallel(self, info, searchword):
-        start = time.time() #timer
-        pool = ThreadPool()
-        base = skosmos.SkosmosDatabase([])
-        entries = base.get_entries()
-        parallel = Helper(searchword)
-        test = pool.map(parallel.search, entries)
-        pool.close()
-        pool.join()
-        outwithyou = rest_resolver({u'results':parallel.get_store()}) #timer, otherwise return rest_resolver({u'results':helper.get_store()})
-        end = time.time() #timer
-        print(end - start)#timer
-        return outwithyou
-
-    #multi argument resover allowing for complex queries which are constructed by concatenating arguments according to
-    #http://api.finto.fi/doc/#!/Global_methods/get_search
-    results_multi = graphene.List(SkosmosResult,
-                                  searchword=graphene.String(required=True),
-                                  language=graphene.String(required=True))
-    def resolve_results_multi(self, info, searchword, language):
-        start = time.time() #timer
-
-        #query for searchword in language is constructed via concatenation; can be extended for vocab etc.
-        language = '&lang=' + language 
-        searchword = searchword + language 
-
-        pool = ThreadPool()
-        base = skosmos.SkosmosDatabase([])
-        entries = base.get_entries()
-        parallel = Helper(searchword)
-        test = pool.map(parallel.search, entries)
-        pool.close()
-        pool.join()
-        outwithyou = rest_resolver({u'results':parallel.get_store()}) #timer, otherwise return rest_resolver({u'results':helper.get_store()})
-        end = time.time() #timer
-        print(end - start)#timer
-        return outwithyou
-
-##EXRESOLVER:
-
-#given pool.map(function, iterable), enables function to pass searchword variable to iterable;
-#stores resulting data as list
 class Helper:
-    def __init__(self, searchword = str, store = []):
-        self.searchword = searchword
-        self.store = store #stores the result of self.search as list
+    """ Helps to call pool.map(function, iterable) by enabling function to pass variable(s) to iterable"""
 
-    def search(self, entry): #entry is a SkosmosInstance()
-        jsondata = entry.search(self.searchword)
-        results = jsondata[u'results']
-        data = self.store
-        self.store = data + results
+    def __init__(self, searchword: str = None, queryname: str = None, store: list = []) -> None:
+        self.searchword = searchword
+        self.queryname = queryname
+        self.store = store # cumulative over all searched entries
+
+    def skosmos(self, entry: skosmos.SkosmosInstance) -> None:
+        """ Seach entry for searchword and store 'results' """
+        data = entry.search(self.searchword)
+        try:
+            results = data['results']
+        except KeyError:
+            print (f"KeyError: schema.Helper.skosmos: {entry.name} data for {self.searchword} has no 'results'")
+        self.store = self.store + results
+ 
+    def sparql(self, entry: sparql.SparqlEndpoint) -> None:
+        """ Call queryname for searchword and store 'bindings' """
+        data = entry.search(self.searchword, self.queryname)
+        try:
+            bindings = data['results']['bindings'] # development: perhaps vars should also be stored, data['head']['vars']
+        except KeyError:
+            print (f"KeyError: schema.Helper.sparql: {entry.name} data for {self.searchword} has no 'results'")
+        self.store = self.store + bindings
 
     def get_store(self):
         return self.store    
 
-#takes result of SPARQL query and, for each binding, sets missing keys to None;
-#returns list of bindings mapped to SparqlResult()s
-def normalize_sparql(data):
-    normalized = []
-    variables = data[u'head'][u'vars']
-    bindings = data[u'results'][u'bindings']
-    for entry in bindings:
-        for variable in variables:
-            try:
-                entry[variable]
-            except KeyError:
-                entry[variable] = None
-        normalized.append(SparqlResult(subject=entry[u'Subject'], #should be dynamically mapped to variables set...
-                                       term=entry[u'Term'],
-                                       parents=entry[u'Parents'],
-                                       descr=entry[u'Descr'],
-                                       scopenote=entry[u'ScopeNote'],
-                                       kind=entry[u'Type'],
-                                       extrakind=entry[u'ExtraType']))
-    return normalized    
+class Query(graphene.ObjectType):
+    """ Schema """    
 
-#returns list of SkosmosResult-objects based on data;
-#missing labels are added and set to None
-def rest_resolver(data): 
-    resolved = []
-    skos = get_skos()
-    for entry in data[u'results']:
-        dummy = entry
-        for label in skos:
-            if label in dummy:
-                pass
-            else:
-                dummy[label] = None        
-        resolved.append(SkosmosResult(uri=dummy[u'uri'],
-                                kind=dummy[u'type'],
-                                preflabel=dummy[u'prefLabel'],
-                                altlabel=dummy[u'altLabel'],
-                                hiddenlabel=dummy[u'hiddenLabel'],
-                                lang=dummy[u'lang'],
-                                notation=dummy[u'notation'],
-                                vocab=dummy[u'vocab'],
-                                exvocab=dummy[u'exvocab']))
-        dummy.clear()
-    return resolved 
+    results_skosmos = graphene.List(SkosmosResult,
+                                    searchword=graphene.String(required=True))
+    """ Skosmos query type """
+    def resolve_results_skosmos(self, info, searchword):
+        """ Resolve Skosmos query type """
+        pool = ThreadPool()
+        base = skosmos.SkosmosDatabase()
+        entries = base.get_entries()
+        helper = Helper(searchword) 
+        pool.map(helper.skosmos, entries)
+        pool.close()
+        pool.join()
+        return Normalize.skosmos(({'results':helper.get_store()}))
 
-##MIX AND MATCH:
+    results_sparql = graphene.List(SparqlResult,
+                                   searchword=graphene.String(required=True),
+                                   queryname=graphene.String(required=True))
 
-#returns implemented SKOS labels
-def get_skos():
-    return [u'uri',u'type' u'prefLabel', u'altLabel', u'hiddenLabel', u'lang', u'notation', u'vocab', u'exvocab']
+    """ SPARQL query type """
+    def resolve_results_sparql(self, info, searchword, queryname):
+        """ Resolve SPARQL query type """
+        pool = ThreadPool()
+        base = sparql.SparqlDatabase()
+        endpoints = base.get_entries()
+        helper = Helper(searchword, queryname) 
+        pool.map(helper.sparql, endpoints)
+        pool.close()
+        pool.join()
+        return Normalize.sparql(({'results' : {'bindings':helper.store}}))
 
-##MAIN:
+    results_skosmos_timed = graphene.List(SkosmosResult,
+                                    searchword=graphene.String(required=True))  
+
+    # development
+    """ Skosmos timed query type """
+    def resolve_results_skosmos_timed(self, info, searchword):                  
+        """ Resolve Skosmos timed query type """
+        start = time.time() # timer
+        pool = ThreadPool()
+        base = skosmos.SkosmosDatabase()
+        entries = base.get_entries()        
+        helper = Helper(searchword) 
+        pool.map(helper.skosmos, entries)
+        pool.close()
+        pool.join()
+        result = Normalize.skosmos(({'results':helper.get_store()}))
+        end = time.time()   # timer
+        print(end - start)  # timer
+        return result
+
+    results_sparql_timed = graphene.List(SparqlResult,
+                                   searchword=graphene.String(required=True),
+                                   queryname=graphene.String(required=True))
+
+    """ SPARQL timed query type """
+    def resolve_results_sparql_timed(self, info, searchword, queryname):
+        """ Resolve SPARQL timed query type """
+        start = time.time() # timer
+        pool = ThreadPool()
+        base = sparql.SparqlDatabase()
+        endpoints = base.get_entries()
+        helper = Helper(searchword, queryname) 
+        pool.map(helper.sparql, endpoints)
+        pool.close()
+        pool.join()
+        result = Normalize.sparql(({'results' : {'bindings':helper.store}}))
+        end = time.time()   # timer
+        print(end - start)  # timer
+        return result
+    #/developtment
+
+class Normalize():
+    """ Collection of normalizing methods """
+    
+    @classmethod
+    def skosmos(self, data: dict) -> List[SkosmosResult]:
+        """ Prepare data for Skosmos resolver """
+        normalized = []
+        labels = ['uri', 'type', 'prefLabel', 'altLabel', 'hiddenLabel', 'lang', 'notation', 'vocab', 'exvocab']
+        try:
+            data['results']
+        except KeyError:
+            print (f"KeyError: schema.Normalize.skosmos: Data without 'results'")
+        else:
+            for entry in data['results']:
+                for label in labels:
+                    try:
+                        entry[label]
+                    except KeyError:
+                        entry[label] = None # missing labels are added and set to None
+                normalized.append(SkosmosResult(uri=entry['uri'],
+                                type_=entry['type'],
+                                preflabel=entry['prefLabel'],
+                                altlabel=entry['altLabel'],
+                                hiddenlabel=entry['hiddenLabel'],
+                                lang=entry['lang'],
+                                notation=entry['notation'],
+                                vocab=entry['vocab'],
+                                exvocab=entry['exvocab']))
+            return normalized
+
+    @classmethod
+    def sparql(self, data: dict) -> List[SparqlResult]:
+        """ Prepare data for Sparql resolver """
+        normalized = []
+        variables = ['Subject', 'Term', 'Parents', 'Descr', 'ScopeNote', 'Type', 'ExtraType']
+        try:
+            data['results']
+        except KeyError:
+            print (f"KeyError: schema.Normalize.sparql: Data without 'results'")
+        else:
+            for entry in data['results']['bindings']:
+                for variable in variables:
+                    try:
+                        entry[variable]
+                    except KeyError:
+                        entry[variable] = None
+                normalized.append(SparqlResult(subject=entry['Subject'],
+                                               term=entry['Term'],
+                                               parents=entry['Parents'],
+                                               descr=entry['Descr'],
+                                               scopenote=entry['ScopeNote'],
+                                               type_=entry['Type'],
+                                               extrakind=entry['ExtraType']))
+            return normalized       
 
 schema = graphene.Schema(query=Query)
 

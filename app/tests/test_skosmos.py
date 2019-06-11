@@ -2,7 +2,6 @@
 
 import sys
 sys.path.append('//itsc-pg2.storage.p.unibas.ch/ub-home$/hinder0000/Documents/GitHub/bartoc-graphql/app')
-import json
 import skosmos  # local
 import data     # local
 
@@ -11,11 +10,11 @@ url = "https://bartoc-skosmos.unibas.ch"
 name = "Bartoc"
 
 def test_SkosmosInstance():
-    testinstance = skosmos.SkosmosInstance(url, name)
+    testinstance = skosmos.SkosmosInstance(name, url)
     for searchword in searchwords:
         result = testinstance.search(searchword)
         with open(f'files/skosmos_{searchword}.json', encoding="utf-8") as file:
-            correct_result = json.load(file)
+            correct_result = skosmos.json.load(file) # json is imported via skosmos
             file.close()
             assert str(result) == str(correct_result), "SkosmosInstance.search failure" # compare str since dict comparison is hard 
         

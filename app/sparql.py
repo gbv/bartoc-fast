@@ -6,12 +6,12 @@ import utility  # local
 
 class SparqlDatabase(utility.Database):
     """ A collection of SPARQL endpoints """
-    def __init__(self, entries: set) -> None:
+    def __init__(self, entries: set = {}) -> None:
         utility.Database.__init__(self, entries)
         self.setup() # setup is called on initializing class
 
     def setup(self) -> None:
-        """ Populates the database with SPARQL endpoints and their queries """
+        """ Populate the database with SPARQL endpoints and their queries """
         for entry in data.sparqlendpoints:
             keys = entry[2].keys() # entry[2]: {queryname1 : query1, queryname2 : query2, ...}
             queries = {}
@@ -34,7 +34,7 @@ class SparqlEndpoint(utility.Entry):
         return self.queries
 
     def search(self, searchword: str, queryname: str) -> dict:
-        """ Sends a queryname-query for searchword to the SPARQL endpoint and returns the results """
+        """ Send a queryname-query for searchword to the SPARQL endpoint and returns the results """
         try:
             query = self.queries[queryname]            
         except KeyError:
@@ -58,9 +58,9 @@ class SparqlQuery:
         return self.query
 
     def update(self, searchword: str) -> None:
-        """ Puts the searchword into the query """        
+        """ Put the searchword into the query """        
         self.query = self.query.replace("!!SEARCHWORD!!", searchword)
 
     def reset(self) -> None:
-        """ Resets to the initial query (w/o searchword) """
+        """ Reset to the initial query (w/o searchword) """
         self.query = self.unmodified
