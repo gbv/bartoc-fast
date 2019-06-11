@@ -19,15 +19,15 @@ class Entry:
     def __init__(self, name: str, url: str) -> None:
         self.name = name
         self.url = url
-        
-    def set_url(self, url: str) -> None:
-        self.url = url
-
-    def get_url(self)-> str:
-        return self.url
 
     def set_name(self, name: str) -> None:
         self.name = name
 
     def get_name(self) -> str:
         return self.name
+         
+    def set_url(self, url: str) -> None:
+        self.url = url
+
+    def get_url(self)-> str:
+        return self.url
