@@ -2,3 +2,5 @@ use pip: $ py -3.7 -m pip install foo
 start server: $ py -3.7 server.py runserver
 create requirements.txt: $ py -3.7 -m pip freeze > requirements.txt
 run pytest: $ py -3.7 -m pytest
+
+graphene api: https://docs.graphene-python.org/en/latest/api/
