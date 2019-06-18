@@ -20,7 +20,7 @@ from graphene_django.views import GraphQLView
 
 urlpatterns = [
     path('hero/', include('hero.urls')),
-    path('skosmos/', include('skosmos.urls')),
+    path('bql/', include('bql.urls')),
     path('graphql', GraphQLView.as_view(graphiql=True)),
     path('admin/', admin.site.urls),
 ]

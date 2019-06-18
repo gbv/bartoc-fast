@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "bartoc_graphql.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "bartoc.settings")
 
 application = get_wsgi_application()
