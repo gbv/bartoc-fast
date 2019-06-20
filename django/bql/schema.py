@@ -62,7 +62,7 @@ class Helper:
         return self.store    
 
 class Query(graphene.ObjectType):
-    """ Schema """    
+    """ Query """    
 
     results_skosmos = graphene.List(SkosmosResult,
                                     searchword=graphene.String(required=True))
