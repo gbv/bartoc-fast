@@ -31,7 +31,7 @@ class SkosmosResult(graphene.ObjectType):
     notation = graphene.String(description='http://www.w3.org/2004/02/skos/core#notation')
     vocab = graphene.String(description='vocabulary')
     exvocab = graphene.String(description='???')
-
+   
 class Helper:
     """ Helps to call pool.map(function, iterable) by enabling function to pass variable(s) to iterable"""
 
@@ -58,9 +58,6 @@ class Helper:
             print (f"KeyError: schema.Helper.sparql: {entry.name} data for {self.searchword} has no 'results'")
         self.store = self.store + bindings
 
-    def get_store(self):
-        return self.store    
-
 class Query(graphene.ObjectType):
     """ Query """    
 
@@ -71,12 +68,12 @@ class Query(graphene.ObjectType):
         """ Resolve Skosmos query type """
         pool = ThreadPool()
         base = SkosmosDatabase()
-        entries = base.get_entries()
+        entries = base.entries
         helper = Helper(searchword) 
         pool.map(helper.skosmos, entries)
         pool.close()
         pool.join()
-        return Normalize.skosmos(({'results':helper.get_store()}))
+        return Normalize.skosmos(({'results':helper.store}))
 
     results_sparql = graphene.List(SparqlResult,
                                    searchword=graphene.String(required=True),
@@ -87,7 +84,7 @@ class Query(graphene.ObjectType):
         """ Resolve SPARQL query type """
         pool = ThreadPool()
         base = SparqlDatabase()
-        endpoints = base.get_entries()
+        endpoints = base.entries
         helper = Helper(searchword, queryname) 
         pool.map(helper.sparql, endpoints)
         pool.close()
@@ -104,12 +101,12 @@ class Query(graphene.ObjectType):
         start = time.time() # timer
         pool = ThreadPool()
         base = SkosmosDatabase()
-        entries = base.get_entries()        
+        entries = base.entries    
         helper = Helper(searchword) 
         pool.map(helper.skosmos, entries)
         pool.close()
         pool.join()
-        result = Normalize.skosmos(({'results':helper.get_store()}))
+        result = Normalize.skosmos(({'results':helper.store}))
         end = time.time()   # timer
         print(end - start)  # timer
         return result
@@ -124,7 +121,7 @@ class Query(graphene.ObjectType):
         start = time.time() # timer
         pool = ThreadPool()
         base = SparqlDatabase()
-        endpoints = base.get_entries()
+        endpoints = base.entries
         helper = Helper(searchword, queryname) 
         pool.map(helper.sparql, endpoints)
         pool.close()
