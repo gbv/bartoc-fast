@@ -1,0 +1,38 @@
+{
+  "head" : {
+    "vars" : [ "x", "label" ]
+  },
+  "results" : {
+    "bindings" : [ {
+      "x" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/aat/300417275"
+      },
+      "label" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "fire (physical concept)"
+      }
+    }, {
+      "x" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/aat/300068986"
+      },
+      "label" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "fires (events)"
+      }
+    }, {
+      "x" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/aat/300053887"
+      },
+      "label" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "firing (technique)"
+      }
+    } ]
+  }
+}

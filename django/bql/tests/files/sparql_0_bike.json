@@ -1,0 +1,108 @@
+{
+  "head" : {
+    "vars" : [ "Subject", "Term", "Parents", "Descr", "ScopeNote", "Type", "ExtraType" ]
+  },
+  "results" : {
+    "bindings" : [ {
+      "Subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/1089745"
+      },
+      "Term" : {
+        "type" : "literal",
+        "value" : "Bīkē"
+      },
+      "Parents" : {
+        "type" : "literal",
+        "value" : "Sumalē, Ethiopia, ... World"
+      },
+      "Type" : {
+        "type" : "literal",
+        "value" : "AdminPlaceConcept"
+      },
+      "ExtraType" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "inhabited places"
+      }
+    }, {
+      "Subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/8373329"
+      },
+      "Term" : {
+        "xml:lang" : "zh-latn-pinyin-x-notone",
+        "type" : "literal",
+        "value" : "Bike"
+      },
+      "Parents" : {
+        "type" : "literal",
+        "value" : "Guizhou, China, ... World"
+      },
+      "Type" : {
+        "type" : "literal",
+        "value" : "AdminPlaceConcept"
+      },
+      "ExtraType" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "inhabited places"
+      }
+    }, {
+      "Subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/aat/300008324"
+      },
+      "Term" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "bicycle paths"
+      },
+      "Parents" : {
+        "type" : "literal",
+        "value" : "paths, walkways, ... Objects Facet"
+      },
+      "ScopeNote" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Paths, paved or unpaved, specifically designed or designated for use by bicyclists."
+      },
+      "Type" : {
+        "type" : "literal",
+        "value" : "Concept"
+      }
+    }, {
+      "Subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/ulan/500009892"
+      },
+      "Term" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Miel, Jan"
+      },
+      "Parents" : {
+        "type" : "literal",
+        "value" : "Persons, Artists"
+      },
+      "Descr" : {
+        "type" : "literal",
+        "value" : "Flemish painter, engraver, 1599-1664, active in Italy"
+      },
+      "ScopeNote" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Probably a pupil of Daniel Seghers, was in Rome in 1641; he was a friend of Pieter van Laar there. In the same year he became director of the Corporation of Virtuosi, and in 1648 a member of the Accademia de San Luca. Comment on works: Religious; Landscapes"
+      },
+      "Type" : {
+        "type" : "literal",
+        "value" : "PersonConcept"
+      },
+      "ExtraType" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "artists (visual artists)"
+      }
+    } ]
+  }
+}

@@ -89,23 +89,18 @@ class Query(graphene.ObjectType):
         allentries = allentries.union(sparqldb.entries)
         allentries = allentries.union(skosmosdb.entries)
 
-        results = []
-        for entry in allentries:
-            result = entry.search(searchword, category)
-            results.append(result)
+        pool = ThreadPool()
+        helper = Helper(searchword, category) 
+        pool.map(helper.fetch, allentries)
+        pool.close()
+        pool.join()
 
-        #DEV causes error:
-        #pool = ThreadPool()
-        #helper = Helper(searchword, category) 
-        #pool.map(helper.fetch, allentries)
-        #pool.close()
-        #pool.join()
-        #results: List[Result] = helper.store
-        #/DEV
+        results: List[Result] = helper.store
+        # return data 
 
         # normalize results:
         globalresults = Normalize.normalize(results)
-
+        helper.store = []
         return globalresults      
 
 class Helper:

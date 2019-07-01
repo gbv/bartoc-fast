@@ -1,0 +1,31 @@
+{
+  "head" : {
+    "vars" : [ "Subject", "Term", "Parents", "Descr", "ScopeNote", "Type", "ExtraType" ]
+  },
+  "results" : {
+    "bindings" : [ {
+      "Subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/aat/300212636"
+      },
+      "Term" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "bicycles"
+      },
+      "Parents" : {
+        "type" : "literal",
+        "value" : "passenger vehicles, <freewheeled vehicles by form or function>, ... Objects Facet"
+      },
+      "ScopeNote" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Vehicles with two wheels in tandem propelled by the rider straddling a frame which holds the wheels and handlebars for steering."
+      },
+      "Type" : {
+        "type" : "literal",
+        "value" : "Concept"
+      }
+    } ]
+  }
+}

@@ -1,28 +1,42 @@
 import urllib.request
 import json
+from openpyxl import load_workbook
 
-from .utility import Database, Entry    # local
-from .data import skosmosinstances      # local
+from .utility import Database, Entry, Result    # local
+from .data import skosmosinstances              # local
 
 class SkosmosDatabase(Database):
     """ A collection of Skosmos instances """
+    
     def __init__(self, entries: set = {}) -> None:
         Database.__init__(self, entries)
         self.setup() # setup is called on initializing class
 
     def setup(self) -> None:
         """ Populates the database with Skosmos instances """
-        for entry in skosmosinstances:
-            self.add_entries(set([SkosmosInstance(entry[1], entry[0])]))
+
+        wb = load_workbook("//itsc-pg2.storage.p.unibas.ch/ub-home$/hinder0000/Documents/GitHub/bartoc-graphql/django/bql/fixtures/skosmosinstances.xlsx") # required for unittest; fixtures/skosmosinstances.xlsx in production
+        for ws in wb:
+            for row in ws.iter_rows(min_row=2, min_col=1, max_col=3, values_only=True):   
+                name = row[0]
+                url = row[1]
+                timeout = row[2]
+                self.add_entries({SkosmosInstance(name, url, timeout)})
 
 class SkosmosInstance(Entry):
     """ A Skosmos instance """
-    def __init__(self, name: str, url: str) -> None:
+    
+    def __init__(self, name: str, url: str, timeout: int) -> None:
         Entry.__init__(self, name, url)
+        self.timeout = timeout
         
-    def search(self, searchword: str) -> dict:
+    def search(self, searchword: str, category: int = 0) -> Result:
         """ Calls Global_methods/get_search for searchword at instance's REST API """
+
+        if self.timeout == 1:
+            return Result(self.name, None, category)
+        
         restapi = self.url + "/rest/v1/search?query=" + searchword
         response = urllib.request.urlopen(restapi)
-        results = json.loads(response.read())
-        return results
+        data = json.loads(response.read())
+        return Result(self.name, data, category)
