@@ -19,18 +19,16 @@ def basic(request):
         form = BasicForm(request.GET)   # create a form instance and populate it with data from the request    
         if form.is_valid():
             searchword = form.cleaned_data["searchword"] # https://docs.djangoproject.com/en/2.2/ref/forms/api/#django.forms.Form.cleaned_data
-            query_string = """{resultsSkosmos(searchword:"!!SEARCHWORD!!") {
-  uri
-  type_
-  preflabel
-  altlabel
-  hiddenlabel
-  lang
-  notation
-  vocab
-  exvocab
-}}"""
-            query_string = query_string.replace("!!SEARCHWORD!!", searchword)
+            query_string = """{
+    resultsGlobal(searchword: "!!!SEARCHWORD!!!", category: 0) {
+    uri
+    prefLabel
+    altLabel
+    hiddenLabel
+    definition
+  }
+}"""
+            query_string = query_string.replace("!!!SEARCHWORD!!!", searchword)
             schema = graphene.Schema(query=Query)
             result = schema.execute(query_string)       # https://docs.graphene-python.org/en/latest/_modules/graphql/execution/base/#ExecutionResult
             result_pretty = json.dumps(result.data, sort_keys=True, indent=4)
@@ -46,18 +44,16 @@ def data(request):
         form = BasicForm(request.GET)   # create a form instance and populate it with data from the request 
         if form.is_valid():
             searchword = form.cleaned_data["searchword"] # https://docs.djangoproject.com/en/2.2/ref/forms/api/#django.forms.Form.cleaned_data
-            query_string = """{resultsSkosmos(searchword:"!!SEARCHWORD!!") {
-  uri
-  type_
-  preflabel
-  altlabel
-  hiddenlabel
-  lang
-  notation
-  vocab
-  exvocab
-}}"""
-            query_string = query_string.replace("!!SEARCHWORD!!", searchword)
+            query_string = """{
+    resultsGlobal(searchword: "!!!SEARCHWORD!!!", category: 0) {
+    uri
+    prefLabel
+    altLabel
+    hiddenLabel
+    definition
+  }
+}"""
+            query_string = query_string.replace("!!!SEARCHWORD!!!", searchword)
             schema = graphene.Schema(query=Query)
             result = schema.execute(query_string)       # https://docs.graphene-python.org/en/latest/_modules/graphql/execution/base/#ExecutionResult
             result_pretty = json.dumps(result.data, sort_keys=True, indent=4)
