@@ -10,7 +10,7 @@ class LanguageDatabase(Database):
     def setup(self) -> None:
         """ Populate the database with languages """
         
-        wb = load_workbook("//itsc-pg2.storage.p.unibas.ch/ub-home$/hinder0000/Documents/GitHub/bartoc-graphql/django/bartocgraphql/fixtures/languages.xlsx") # required for unittest; fixtures/languages.xlsx in production
+        wb = load_workbook("//itsc-pg2.storage.p.unibas.ch/ub-home$/hinder0000/Documents/GitHub/bartocgraphql/django/bartocgraphql/fixtures/languages.xlsx") # required for unittest; fixtures/languages.xlsx in production
         for ws in wb:
             vocabulary = []
             for row in ws.iter_rows(min_row=3, min_col=4, max_col=5, values_only=True):

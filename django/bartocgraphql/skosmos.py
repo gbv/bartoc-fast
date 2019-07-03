@@ -16,7 +16,7 @@ class SkosmosDatabase(Database):
     def setup(self) -> None:
         """ Populates the database with Skosmos instances """
 
-        wb = load_workbook("//itsc-pg2.storage.p.unibas.ch/ub-home$/hinder0000/Documents/GitHub/bartoc-graphql/django/bartocgraphql/fixtures/skosmosinstances.xlsx") # required for unittest; fixtures/skosmosinstances.xlsx in production
+        wb = load_workbook("//itsc-pg2.storage.p.unibas.ch/ub-home$/hinder0000/Documents/GitHub/bartocgraphql/django/bartocgraphql/fixtures/skosmosinstances.xlsx") # required for unittest; fixtures/skosmosinstances.xlsx in production
         for ws in wb:
             for row in ws.iter_rows(min_row=2, min_col=1, max_col=3, values_only=True):   
                 name = row[0]
