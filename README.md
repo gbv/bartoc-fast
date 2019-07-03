@@ -1,1 +1,1 @@
-# bartoc-graphql
+# bartocgraphql
