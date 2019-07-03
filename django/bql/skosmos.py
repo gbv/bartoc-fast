@@ -1,9 +1,10 @@
-import urllib.request
-import json
+import time # dev
+import asyncio
+
+import aiohttp
 from openpyxl import load_workbook
 
 from .utility import Database, Entry, Result    # local
-from .data import skosmosinstances              # local
 
 class SkosmosDatabase(Database):
     """ A collection of Skosmos instances """
@@ -29,14 +30,24 @@ class SkosmosInstance(Entry):
     def __init__(self, name: str, url: str, timeout: int) -> None:
         Entry.__init__(self, name, url)
         self.timeout = timeout
-        
-    def search(self, searchword: str, category: int = 0) -> Result:
-        """ Calls Global_methods/get_search for searchword at instance's REST API """
 
+    async def search(self, session: aiohttp.ClientSession, searchword: str, category: int = 0) -> Result:
+        """ Coroutine: calls Global_methods/get_search for searchword at instance's REST API """
+
+        start = time.time()                                 # dev
+        
         if self.timeout == 1:
             return Result(self.name, None, category)
         
         restapi = self.url + "/rest/v1/search?query=" + searchword
-        response = urllib.request.urlopen(restapi)
-        data = json.loads(response.read())
-        return Result(self.name, data, category)
+        async with session.get(restapi) as response:
+            
+            # print(f'ASYNC now {self.name}')                 # dev
+
+            data = await response.json()
+
+            end = time.time()                               # dev
+            print(f'ASYNC {self.name} took {end - start}')  # dev
+
+            return Result(self.name, data, category)
+            

@@ -1,8 +1,11 @@
 """ sparql.py """
 
-from __future__ import annotations 
+from __future__ import annotations
+import time # dev
 from typing import List, Set, Dict, Tuple, Optional
+import asyncio
 
+import aiohttp
 from openpyxl import load_workbook
 from SPARQLWrapper import (SPARQLWrapper, JSON)
 
@@ -43,22 +46,30 @@ class SparqlEndpoint(Entry):
         Entry.__init__(self, name, url)   
         self.queries = queries
 
-    def search(self, searchword: str, category: int = 0) -> Result:
-        """ Send a category-query (default 0) for searchword to the SPARQL endpoint and return the results """
-
+    async def search(self, session: aiohttp.ClientSession, searchword: str, category: int = 0) -> Result:
+        """ Coroutine: Send a query (default category 0) for searchword to the SPARQL endpoint and return the results """
+        start = time.time()                                 # dev
         query = self.select(category)
 
         if query.timeout == 1:
             return Result(self.name, None, category)
         
         query.update(searchword)
-        sparqlw = SPARQLWrapper(self.url)
-        sparqlw.setQuery(query.querystring)
-        sparqlw.setReturnFormat(JSON)
-        data = sparqlw.queryAndConvert() 
-        query.reset()
-        return Result(self.name, data, category)
-                
+
+        # we just want the flat query, not the request...
+        sparqlwrapper = SPARQLWrapper(self.url)
+        sparqlwrapper.setQuery(query.querystring)
+        sparqlwrapper.setReturnFormat(JSON)
+        flatquery = sparqlwrapper.query().geturl()
+
+        # ...because the request is done here
+        async with session.get(flatquery) as response:
+            data = await response.json()
+            query.reset()
+            end = time.time()                               # dev
+            print(f'ASYNC {self.name} took {end - start}')  # dev
+            return Result(self.name, data, category)
+
     def select(self, category: int) -> SparqlQuery:
         """ Select query by category """
         

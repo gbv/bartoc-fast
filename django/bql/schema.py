@@ -1,11 +1,11 @@
 """ schema.py """
 
-import time
-from multiprocessing import Pool
-from multiprocessing.dummy import Pool as ThreadPool
+import time # for dev
+import asyncio 
 from typing import List, Set, Dict, Tuple, Optional, Union
 
 import graphene
+import aiohttp
 
 from .skosmos import SkosmosInstance, SkosmosDatabase   # local
 from .sparql import SparqlEndpoint, SparqlDatabase      # local
@@ -82,31 +82,44 @@ class Query(graphene.ObjectType):
     def resolve_results_global(self, info, searchword, category):
         """ Resolve Global query type """
 
-        # fetch data from databases as results:
+        start = time.time()                                 # dev
+        print(f'ASYNC **START')                            # dev
+
+        # initialize 
         sparqldb = SparqlDatabase()
         skosmosdb = SkosmosDatabase()
         allentries = set()
         allentries = allentries.union(sparqldb.entries)
         allentries = allentries.union(skosmosdb.entries)
+        end_init = time.time()                              # dev
+        print(f'ASYNC *INITIALIZE took {end_init - start}')  # dev
 
-        results = []
-        for entry in allentries:
-            result = entry.search(searchword, category)
-            results.append(result)
-
-        #DEV causes error:
-        #pool = ThreadPool()
-        #helper = Helper(searchword, category) 
-        #pool.map(helper.fetch, allentries)
-        #pool.close()
-        #pool.join()
-        #results: List[Result] = helper.store
-        #/DEV
+        # fetch data from databases as results:
+        results = asyncio.run(fetch(allentries, searchword, category))
+        end_fetch = time.time()                             # dev
+        print(f'ASYNC *FETCH took {end_fetch - end_init}')   # dev
 
         # normalize results:
         globalresults = Normalize.normalize(results)
+        end = time.time()                                   # dev
+        print(f'ASYNC *NORMALIZE took {end - end_fetch}')    # dev
+        print(f'ASYNC **TOTAL took {end - start}')               # dev
+        return globalresults
 
-        return globalresults      
+async def fetch(entries: List[Union[SkosmosInstance, SparqlEndpoint]], searchword: str, category: int = 0) -> List[Result]:
+    """ bla """
+
+    async with aiohttp.ClientSession() as session:
+
+        # start = time.time()                         # dev
+
+        results = await asyncio.gather(*[entry.search(session, searchword, category) for entry in entries])
+        await session.close()
+        
+        # end = time.time()                           # dev
+        # print(f'ASYNC FETCH took {end - start}')    # dev
+
+        return results    
 
 class Helper:
     """ Helper to use multiprocessing.Pool.map """

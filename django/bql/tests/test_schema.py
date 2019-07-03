@@ -3,8 +3,6 @@
 from django.test import SimpleTestCase
 
 import time
-from multiprocessing import Pool
-from multiprocessing.dummy import Pool as ThreadPool
 from typing import List, Set, Dict, Tuple, Optional
 
 import json
@@ -13,7 +11,27 @@ import graphene
 from ..skosmos import SkosmosInstance, SkosmosDatabase          # local
 from ..sparql import SparqlEndpoint, SparqlDatabase             # local
 from ..schema import GlobalResult, Query, Helper, Normalize     # local
-from ..utility import Result                                        # local
+from ..utility import Result                                    # local
+
+
+class TestNewSchema(SimpleTestCase):
+
+    def setUp(self) -> None:
+        self.query = Query()
+
+    def test_asyncio(self):
+        info = None
+        searchword = "rennrad"
+        category = 0
+        results = self.query.resolve_results_global(info, searchword, category)
+        print(results)
+        print(len(results))
+        for result in results:
+            print(result.name)
+
+        
+
+    
 
 class TestQueryFetch(SimpleTestCase):
 
@@ -61,6 +79,19 @@ class TestQuery(SimpleTestCase):
         print(len(globalresults))
         for globalresult in globalresults:
             print(globalresult.uri)
+
+class TestQueryAsync(SimpleTestCase):
+
+    def setUp(self) -> None:
+        self.query = Query()
+
+    def test_fetch(self):
+        info = None
+        searchword = "rennrad"
+        category = 0
+        results = self.query.resolve_results_global(info, searchword, category)
+
+    
         
 class TestGlobalResult(SimpleTestCase):
 
@@ -128,6 +159,7 @@ class TestNormalizeLustre(SimpleTestCase):
 
         globalresults = set(globalresults)
         print (len(globalresults))
+
 
 
                                        
