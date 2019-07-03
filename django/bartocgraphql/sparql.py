@@ -5,7 +5,7 @@ import time # dev
 from typing import List, Set, Dict, Tuple, Optional
 import asyncio
 
-import aiohttp
+from aiohttp import ClientSession
 from openpyxl import load_workbook
 from SPARQLWrapper import (SPARQLWrapper, JSON)
 
@@ -46,7 +46,7 @@ class SparqlEndpoint(Entry):
         Entry.__init__(self, name, url)   
         self.queries = queries
 
-    async def search(self, session: aiohttp.ClientSession, searchword: str, category: int = 0) -> Result:
+    async def search(self, session: ClientSession, searchword: str, category: int = 0) -> Result:
         """ Coroutine: Send a query (default category 0) for searchword to the SPARQL endpoint and return the results """
         start = time.time()                                 # dev
         query = self.select(category)

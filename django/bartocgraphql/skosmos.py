@@ -1,7 +1,7 @@
 import time                                     # dev
 import asyncio
 
-import aiohttp
+from aiohttp import ClientSession
 from openpyxl import load_workbook
 
 from .utility import Database, Entry, Result    # local
@@ -31,7 +31,7 @@ class SkosmosInstance(Entry):
         Entry.__init__(self, name, url)
         self.timeout = timeout
 
-    async def search(self, session: aiohttp.ClientSession, searchword: str, category: int = 0) -> Result:
+    async def search(self, session: ClientSession, searchword: str, category: int = 0) -> Result:
         """ Coroutine: calls Global_methods/get_search for searchword at instance's REST API """
 
         start = time.time()                                 # dev

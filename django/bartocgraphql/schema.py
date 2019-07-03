@@ -5,7 +5,7 @@ import asyncio
 from typing import List, Set, Dict, Tuple, Optional, Union
 
 import graphene
-import aiohttp
+from aiohttp import ClientSession
 
 from .skosmos import SkosmosInstance, SkosmosDatabase   # local
 from .sparql import SparqlEndpoint, SparqlDatabase      # local
@@ -109,7 +109,7 @@ class Query(graphene.ObjectType):
 async def fetch(entries: List[Union[SkosmosInstance, SparqlEndpoint]], searchword: str, category: int = 0) -> List[Result]:
     """ bla """
 
-    async with aiohttp.ClientSession() as session:
+    async with ClientSession() as session:
 
         # start = time.time()                         # dev
 
