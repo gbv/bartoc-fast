@@ -1,6 +1,21 @@
-use pip: $ py -3.7 -m pip install foo
-start server: $ py -3.7 server.py runserver
-create requirements.txt: $ py -3.7 -m pip freeze > requirements.txt
-run pytest: $ py -3.7 -m pytest
+A. use pip:
+1. $PS py -3.7 -m pip install foo
 
-graphene api: https://docs.graphene-python.org/en/latest/api/
+B. start dev server: 
+1. $PS py -3.7 server.py runserver
+
+C. run pytest: 
+1. $PS py -3.7 -m pytest
+
+D. run dev server in venv:
+1. activate venv: $PS .venv\Scripts\Activate.ps1
+2. go to folder that contains manage.py: $PS ...
+3. run manage.py: $PS python manage.py runserver
+
+E. create requirements.txt file:
+1. activate venv: $PS .venv\Scripts\Activate.ps1
+2. $PS pip freeze --local > requirements.txt
+
+
+
+
