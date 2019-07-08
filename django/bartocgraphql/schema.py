@@ -30,6 +30,7 @@ class GlobalResult(graphene.ObjectType):
     definition = graphene.String(description='http://www.w3.org/2004/02/skos/core#definition')
     # inScheme
     # topConceptOf
+    source = graphene.String(description='name of queried resource')
 
     def __eq__(self, other):
         """ Identity condition """ # https://stackoverflow.com/questions/4169252/remove-duplicates-in-list-of-object-with-python
@@ -184,6 +185,7 @@ class Normalize:
                 fieldvalue = binding["object"]["value"]     # eg: "object": { "type": "literal", "xml:lang": "en", "value": "TRAFFIC, TRANSPORTATION" }
                 field = GlobalResult.select(fielduri)
                 setattr(globalresult, field, fieldvalue)
+                globalresult.source = result.name
                 normalized.append(globalresult)
         return self.purge(normalized)
 
@@ -205,6 +207,7 @@ class Normalize:
                     except KeyError:
                         entry[field] = None                     # missing fields are added (required for resolver) and set to None
                     setattr(globalresult, field, entry[field])  # we set each field of globalresult to the corresponding value in the entry
+                globalresult.source = result.name               # we set the source of globalresult to the name of the result (i.e., name of the resource where the result was queried)
                 normalized.append(globalresult)
         self.purge(normalized)
         return self.purge(normalized)

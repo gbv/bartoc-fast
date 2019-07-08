@@ -38,7 +38,6 @@ class Result:
         self.data = data            # JSON output
         self.category = category    # of the query, if any
 
-
 class MappingDatabase(Database):
     """ A collection of mappings """
 
