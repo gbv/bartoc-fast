@@ -5,6 +5,7 @@ from django.db import models # https://docs.djangoproject.com/en/2.2/ref/models/
 from aiohttp import ClientSession
 from openpyxl import load_workbook
 from SPARQLWrapper import (SPARQLWrapper, JSON)
+from urllib import parse
 
 from .utility import Database, Entry, Result    # local
 
@@ -55,13 +56,20 @@ class SkosmosInstance(Resource):
     def select(self, category: int) -> SkosmosQuery:
         """ Select Skosmos query by category """ 
         
-        return SkosmosQuery.objects.get(skosmosinstance=self, category=category)     
+        return SkosmosQuery.objects.get(skosmosinstance=self, category=category)
+
+    def clean(self, searchword: str) -> str:
+        """ Prepare searchword for search """
+
+        return parse.quote(searchword)   
 
     async def search(self, session: ClientSession, searchword: str, category: int = 0) -> Result:
         """ Coroutine: send query to Skosmos instance """
 
         start = time.time()                                 # dev
         query = self.select(category)
+
+        searchword = self.clean(searchword)
         
         if query.timeout == 1:
             return Result(self.name, None, category)
