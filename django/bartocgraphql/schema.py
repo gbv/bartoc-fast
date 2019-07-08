@@ -7,8 +7,8 @@ from typing import List, Set, Dict, Tuple, Optional, Union
 import graphene
 from aiohttp import ClientSession
 
-from .skosmos import SkosmosInstance, SkosmosDatabase   # local
-from .sparql import SparqlEndpoint, SparqlDatabase      # local
+from .models import SkosmosInstance, SparqlEndpoint
+
 from .utility import Result, MappingDatabase            # local
 
 class GlobalResult(graphene.ObjectType):
@@ -85,17 +85,17 @@ class Query(graphene.ObjectType):
         start = time.time()                                 # dev
         print(f'ASYNC **START')                             # dev
 
-        # initialize 
-        sparqldb = SparqlDatabase()
-        skosmosdb = SkosmosDatabase()
-        allentries = set()
-        allentries = allentries.union(sparqldb.entries)
-        allentries = allentries.union(skosmosdb.entries)
+        # initialize:
+        # should already be done... if not, update federation manually
+
+        # access resources in federation:
+        resources = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all())
+        
         end_init = time.time()                              # dev
         print(f'ASYNC *INITIALIZE took {end_init - start}') # dev
 
-        # fetch data from databases as results:
-        results = asyncio.run(fetch(allentries, searchword, category))
+        # fetch data from resources as results:
+        results = asyncio.run(fetch(resources, searchword, category))
         end_fetch = time.time()                             # dev
         print(f'ASYNC *FETCH took {end_fetch - end_init}')  # dev
 
@@ -106,34 +106,20 @@ class Query(graphene.ObjectType):
         print(f'ASYNC **TOTAL took {end - start}')          # dev
         return globalresults
 
-async def fetch(entries: List[Union[SkosmosInstance, SparqlEndpoint]], searchword: str, category: int = 0) -> List[Result]:
-    """ bla """
+async def fetch(resources: List[Union[SkosmosInstance, SparqlEndpoint]], searchword: str, category: int = 0) -> List[Result]:
+    """ Coroutine: fetch data from resources as results """
 
     async with ClientSession() as session:
 
         # start = time.time()                         # dev
 
-        results = await asyncio.gather(*[entry.search(session, searchword, category) for entry in entries])
+        results = await asyncio.gather(*[resource.search(session, searchword, category) for resource in resources])
         await session.close()
         
         # end = time.time()                           # dev
         # print(f'ASYNC FETCH took {end - start}')    # dev
 
         return results    
-
-class Helper:
-    """ Helper to use multiprocessing.Pool.map """
-   
-    def __init__(self, searchword: str, category: int = 0, store: List[Result] = []) -> None:
-        self.searchword = searchword
-        self.category = category
-        self.store = store
-
-    def fetch(self, entry: Union[SkosmosInstance, SparqlEndpoint]) -> None:
-        """ Fetch result from database and add to store """
-        
-        result: Result = entry.search(self.searchword, self.category)
-        self.store.append(result)
 
 class Normalize:
     """ Normalize results """

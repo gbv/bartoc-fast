@@ -1,11 +1,11 @@
 A. use pip:
 1. $PS py -3.7 -m pip install foo
 
-B. start dev server: 
-1. $PS py -3.7 server.py runserver
-
-C. run pytest: 
+B. run pytest: 
 1. $PS py -3.7 -m pytest
+
+C. start dev server: 
+1. $PS py -3.7 ./manage.py runserver
 
 D. run dev server in venv:
 1. activate venv: $PS .venv\Scripts\Activate.ps1
@@ -16,6 +16,17 @@ E. create requirements.txt file:
 1. activate venv: $PS .venv\Scripts\Activate.ps1
 2. $PS pip freeze --local > requirements.txt
 
+F. run migrations:
+1. $PS py -3.7 ./manage.py makemigrations
+2. $PS py -3.7 ./manage.py migrate
+
+G. run interactive console:
+1. $PS py -3.7 ./manage.py shell
+
+H. rewrite model database with new data:
+1. $PS py -3.7 ./manage.py shell
+2. $PS >>> from bartocgraphql.models import Federation
+3. $PS >>> Federation.objects.get(pk=1).populate()
 
 
 
