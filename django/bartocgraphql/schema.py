@@ -30,7 +30,7 @@ class GlobalResult(graphene.ObjectType):
     definition = graphene.String(description='http://www.w3.org/2004/02/skos/core#definition')
     # inScheme
     # topConceptOf
-    source = graphene.String(description='name of queried resource')
+    source = graphene.String(description='name of queried resource') # nb: purge deletes sources for doubles!
 
     def __eq__(self, other):
         """ Identity condition """ # https://stackoverflow.com/questions/4169252/remove-duplicates-in-list-of-object-with-python

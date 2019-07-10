@@ -1,4 +1,59 @@
-Welcome to BARTOC GraphQL!
+{% extends 'bartocgraphql/layouts/base.html' %}
+
+{% block content %}
+  <h2>Introduction</h2>
+  <p>BARTOC-GraphQL is an asynchronous federated search. This means that you can query a large number of vocabularies (at the moment 2500 local, 500 remote) and expect a reasonably fast result. There are three search methods available: basic search, advanced search and expert search.
+  </p>
+  <table class="table table-hover text-center" >
+	  <tbody>
+      <tr>
+		<th></th>
+        <th>Basic</th>
+        <th>Advanced</th>
+        <th>Expert</th>
+      </tr>
+	  <tr>
+        <td style="text-align:left">Search federation</td>
+        <td><span class="badge badge-success">YES</span></td>
+        <td><span class="badge badge-success">YES</span></td>
+		<td><span class="badge badge-success">YES</span></td>
+      </tr>
+      <tr>
+        <td style="text-align:left">Set maximum search time</td>
+        <td><span class="badge badge-danger">NO</span></td>
+        <td><span class="badge badge-success">YES</span></td>
+		<td><span class="badge badge-success">YES</span></td>
+      </tr>
+      <tr>
+        <td style="text-align:left">Display duplicates</td>
+		<td><span class="badge badge-danger">NO</span></td>
+        <td><span class="badge badge-success">YES</span></td>
+		<td><span class="badge badge-success">YES</span></td>
+      </tr>
+	  <tr>
+        <td style="text-align:left">Customize search</td>
+        <td><span class="badge badge-danger">NO</span></td>
+        <td><span class="badge badge-success">YES</span></td>
+		<td><span class="badge badge-success">YES</span></td>
+      </tr>
+      <tr>
+        <td style="text-align:left">Customize federation</td>
+        <td><span class="badge badge-danger">NO</span></td>
+        <td><span class="badge badge-success">YES</span></td>
+		<td><span class="badge badge-danger">NO</span></td>
+      </tr>
+	  <tr>
+        <td style="text-align:left">Introspect GraphQL schema</td>
+        <td><span class="badge badge-danger">NO</span></td>
+		<td><span class="badge badge-danger">NO</span></td>
+        <td><span class="badge badge-success">YES</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+
  <ul>
   <li><a href="{% url 'basic' %}">Basic seach for non-expert users</a></li>
   <li><a href="{% url 'expert' %}">Expert search (Graph<i>i</i>QL)</a></li>
