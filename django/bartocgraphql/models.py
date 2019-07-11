@@ -1,4 +1,4 @@
-import time                                     # dev
+import time # dev
 import asyncio
 
 from django.db import models # https://docs.djangoproject.com/en/2.2/ref/models/fields/#django.db.models.Field
@@ -7,12 +7,10 @@ from openpyxl import load_workbook
 from SPARQLWrapper import (SPARQLWrapper, JSON)
 from urllib import parse
 
-from .utility import Database, Entry, Result    # local
-
-LOCALPATH = "//itsc-pg2.storage.p.unibas.ch/ub-home$/hinder0000/Documents/GitHub/bartocgraphql/django/bartocgraphql/"
+from .utility import Database, Entry, Result, STANDARD_TIME, LOCAL_APP_PATH
 
 # queries:
-class Query(models.Model):
+class Query(models.Model): # confusing, same name as schema.Query
     """ Abstract query class """
     
     querystring = models.CharField(max_length=100)
@@ -50,6 +48,21 @@ class Resource(models.Model):
     class Meta:
         abstract = True
 
+    async def main(self,
+                   session: ClientSession,
+                   searchword: str,
+                   category: int = 0,
+                   maxsearchtime: int = STANDARD_TIME) -> Result:
+        """ Coroutine: send time sensitive query to resource """
+
+        try:
+            result = await asyncio.wait_for(self.search(session, searchword, category), timeout=maxsearchtime)
+            return result
+        
+        except asyncio.TimeoutError:
+            print(f'ASYNC {self.name} run out of time!') # dev
+            return Result(self.name, None, category)
+
 class SkosmosInstance(Resource):
     """ A Skosmos instance """
 
@@ -66,7 +79,7 @@ class SkosmosInstance(Resource):
     async def search(self, session: ClientSession, searchword: str, category: int = 0) -> Result:
         """ Coroutine: send query to Skosmos instance """
 
-        start = time.time()                                 # dev
+        start = time.time() # dev
         query = self.select(category)
 
         searchword = self.clean(searchword)
@@ -79,8 +92,8 @@ class SkosmosInstance(Resource):
             
             data = await response.json()
 
-            end = time.time()                               # dev
-            print(f'ASYNC {self.name} took {end - start}')  # dev
+            end = time.time() # dev
+            print(f'ASYNC {self.name} took {end - start}') # dev
 
             return Result(self.name, data, category)
 
@@ -95,7 +108,7 @@ class SparqlEndpoint(Resource):
     async def search(self, session: ClientSession, searchword: str, category: int = 0) -> Result:
         """ Coroutine: send query to SPARQL endpoint """
 
-        start = time.time()                                 # dev
+        start = time.time() # dev
         query = self.select(category)
 
         if query.timeout == 1:
@@ -112,8 +125,8 @@ class SparqlEndpoint(Resource):
         # ...because the request is done here
         async with session.get(flatquery) as response:
             data = await response.json()
-            end = time.time()                               # dev
-            print(f'ASYNC {self.name} took {end - start}')  # dev
+            end = time.time() # dev
+            print(f'ASYNC {self.name} took {end - start}') # dev
             return Result(self.name, data, category)
     
 # federation: 
@@ -126,7 +139,7 @@ class Federation(models.Model):
 
         SkosmosInstance.objects.all().delete()
 
-        skosmosinstances = load_workbook(LOCALPATH + "fixtures/skosmosinstances.xlsx") # required for unittest; simply fixtures/skosmosinstances.xlsx in production
+        skosmosinstances = load_workbook(LOCAL_APP_PATH + "fixtures/skosmosinstances.xlsx") # required for unittest; simply fixtures/skosmosinstances.xlsx in production
 
         for ws in skosmosinstances:
             for row in ws.iter_rows(min_row=2, min_col=1, max_col=3, values_only=True):   
@@ -148,7 +161,7 @@ class Federation(models.Model):
 
         SparqlEndpoint.objects.all().delete()
 
-        sparqlendpoints = load_workbook(LOCALPATH + "fixtures/sparqlendpoints.xlsx") # required for unittest; fixtures/sparqlendpoints.xlsx in production
+        sparqlendpoints = load_workbook(LOCAL_APP_PATH + "fixtures/sparqlendpoints.xlsx") # required for unittest; fixtures/sparqlendpoints.xlsx in production
 
         for ws in sparqlendpoints:
             endpoint = SparqlEndpoint(federation=self,

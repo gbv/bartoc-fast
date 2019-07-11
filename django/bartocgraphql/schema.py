@@ -1,6 +1,6 @@
 """ schema.py """
 
-import time # for dev
+import time # dev
 import asyncio 
 from typing import List, Set, Dict, Tuple, Optional, Union
 
@@ -9,7 +9,7 @@ from aiohttp import ClientSession
 
 from .models import SkosmosInstance, SparqlEndpoint
 
-from .utility import Result, MappingDatabase            # local
+from .utility import Result, MappingDatabase, STANDARD_TIME # local
 
 class GlobalResult(graphene.ObjectType):
     """ Result of a Global (with capital G) query """
@@ -61,7 +61,7 @@ class GlobalResult(graphene.ObjectType):
         except AssertionError:
             return None
         else:
-            mappings = MappingDatabase() # replace with model
+            mappings = MappingDatabase() # !dev: replace with model
             mapping = mappings.select_by_field(field)
             return mapping.uri
 
@@ -77,10 +77,11 @@ class Query(graphene.ObjectType):
     """ Query """
 
     results_global = graphene.List(GlobalResult,
-                                   searchword=graphene.String(required=True),
-                                   category=graphene.Int(required=True)) # check this line
+                                       searchword=graphene.String(required=True),
+                                       category=graphene.Argument(graphene.Int, default_value=0),
+                                       maxsearchtime=graphene.Argument(graphene.Int, default_value=STANDARD_TIME)) 
 
-    def resolve_results_global(self, info, searchword, category):
+    def resolve_results_global(self, info, searchword, category, maxsearchtime):
         """ Resolve Global query type """
 
         start = time.time()                                 # dev
@@ -96,7 +97,7 @@ class Query(graphene.ObjectType):
         print(f'ASYNC *INITIALIZE took {end_init - start}') # dev
 
         # fetch data from resources as results:
-        results = asyncio.run(fetch(resources, searchword, category))
+        results = asyncio.run(fetch(resources, searchword, category, maxsearchtime))
         end_fetch = time.time()                             # dev
         print(f'ASYNC *FETCH took {end_fetch - end_init}')  # dev
 
@@ -107,20 +108,19 @@ class Query(graphene.ObjectType):
         print(f'ASYNC **TOTAL took {end - start}')          # dev
         return globalresults
 
-async def fetch(resources: List[Union[SkosmosInstance, SparqlEndpoint]], searchword: str, category: int = 0) -> List[Result]:
+
+async def fetch(resources: List[Union[SkosmosInstance, SparqlEndpoint]],
+                searchword: str,
+                category: int = 0,
+                maxsearchtime: int = STANDARD_TIME) -> List[Result]:
     """ Coroutine: fetch data from resources as results """
 
     async with ClientSession() as session:
 
-        # start = time.time()                         # dev
-
-        results = await asyncio.gather(*[resource.search(session, searchword, category) for resource in resources])
+        results = await asyncio.gather(*[resource.main(session, searchword, category, maxsearchtime) for resource in resources])
         await session.close()
-        
-        # end = time.time()                           # dev
-        # print(f'ASYNC FETCH took {end - start}')    # dev
 
-        return results    
+        return results
 
 class Normalize:
     """ Normalize results """
@@ -142,7 +142,7 @@ class Normalize:
 
         skosmosnames = ["AgroVoc", "Bartoc", "data.ub.uio.no", "Finto", "Legilux", "MIMO", "UNESCO", "OZCAR-Theia", "Loterre"]
 
-        if result.data == None:
+        if result.data == None: # here we catch timed out resources
             return []
         elif result.name in skosmosnames:
             return self.skosmos(result)
@@ -173,7 +173,8 @@ class Normalize:
         try:
             result.data['results']['bindings'] # here data format (perhaps also @context) could be verified; select already excludes None data
         except KeyError:
-            pass
+            print(f'ERROR: Something is wrong with Normalize.{result.name}!')
+            return []
         else:
             bindings = result.data['results']['bindings']
             normalized = []
@@ -187,7 +188,7 @@ class Normalize:
                 setattr(globalresult, field, fieldvalue)
                 globalresult.source = result.name
                 normalized.append(globalresult)
-        return self.purge(normalized)
+            return self.purge(normalized)
 
     @classmethod
     def skosmos(self, result: Result) -> List[GlobalResult]:
@@ -196,7 +197,8 @@ class Normalize:
         try:
             result.data['results'] # here data format (perhaps also @context) could be verified; select already excludes None data
         except KeyError:
-            pass
+            print(f'ERROR: Something is wrong with Normalize.{result.name}!')
+            return []
         else:
             normalized = []
             for entry in result.data['results']:
@@ -209,6 +211,5 @@ class Normalize:
                     setattr(globalresult, field, entry[field])  # we set each field of globalresult to the corresponding value in the entry
                 globalresult.source = result.name               # we set the source of globalresult to the name of the result (i.e., name of the resource where the result was queried)
                 normalized.append(globalresult)
-        self.purge(normalized)
-        return self.purge(normalized)
+            return self.purge(normalized)
     

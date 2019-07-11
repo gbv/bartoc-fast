@@ -5,6 +5,9 @@ from typing import List, Set, Dict, Tuple, Optional, Union
 
 from openpyxl import load_workbook
 
+LOCAL_APP_PATH = "//itsc-pg2.storage.p.unibas.ch/ub-home$/hinder0000/Documents/GitHub/bartocgraphql/django/bartocgraphql/" # local app path
+STANDARD_TIME = 5 # standard search time in seconds
+
 class Database:
     """ A database """
     

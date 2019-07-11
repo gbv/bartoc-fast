@@ -9,7 +9,7 @@ from .forms import BasicForm, AdvancedForm  # local
 from .schema import Query                   # local
 
 QUERYSTRING = """{
-    resultsGlobal(searchword: "!!!SEARCHWORD!!!", category: 0) {
+    resultsGlobal(SEARCHWORD, MAXSEARCHTIME) {
     uri
     prefLabel
     altLabel
@@ -43,9 +43,12 @@ def basic(request):
     if request.method == "GET":         
         form = BasicForm(request.GET)
         if form.is_valid():
-            searchword = form.cleaned_data["searchword"] 
+            
             query_string = QUERYSTRING
-            query_string = query_string.replace("!!!SEARCHWORD!!!", searchword)
+            searchword = form.cleaned_data["searchword"]
+            query_string = query_string.replace("SEARCHWORD", f'searchword: "{searchword}"')
+            query_string = query_string.replace(", MAXSEARCHTIME", "")
+
             schema = graphene.Schema(query=Query)
             result = schema.execute(query_string) 
             result_pretty = json.dumps(result.data, sort_keys=True, indent=4)
@@ -61,13 +64,7 @@ def data(request):
     if request.method == "GET":         
         form = BasicForm(request.GET)   
         if form.is_valid():
-            searchword = form.cleaned_data["searchword"] 
-            query_string = QUERYSTRING
-            query_string = query_string.replace("!!!SEARCHWORD!!!", searchword)
-            schema = graphene.Schema(query=Query)
-            result = schema.execute(query_string)
-            result_pretty = json.dumps(result.data, sort_keys=True, indent=4)
-            return HttpResponse(result_pretty,content_type="application/json")
+            pass
     else:
         form = BasicForm()
     context = {"form": form, "data_page": "active"}
@@ -76,18 +73,33 @@ def data(request):
 def advanced(request):
     """ Advanced search """
 
-    if request.method == "GET":                             # if the form is submitted
-        form = AdvancedForm(request.GET)                    # create a form instance and populate it with data from the request    
+    if request.method == "GET":                             
+        form = AdvancedForm(request.GET)        
         if form.is_valid():
-            searchword = form.cleaned_data["searchword"]    # https://docs.djangoproject.com/en/2.2/ref/forms/api/#django.forms.Form.cleaned_data
-            query_string = QUERYSTRING
-            query_string = query_string.replace("!!!SEARCHWORD!!!", searchword)
+
+            query_string = QUERYSTRING # copy since we need the original
+            
+            searchword = form.cleaned_data["searchword"] # https://docs.djangoproject.com/en/2.2/ref/forms/api/#django.forms.Form.cleaned_data
+            query_string = query_string.replace("SEARCHWORD", f'searchword: "{searchword}"')                          
+
+            maxsearchtime = form.cleaned_data["maxsearchtime"]
+            if maxsearchtime == None:
+                query_string = query_string.replace(", MAXSEARCHTIME", "")
+            else:
+                query_string = query_string.replace("MAXSEARCHTIME", f"maxsearchtime: {maxsearchtime}")
+
+            # category = form.cleaned_data["category"]
+                
             schema = graphene.Schema(query=Query)
-            result = schema.execute(query_string)           # https://docs.graphene-python.org/en/latest/_modules/graphql/execution/base/#ExecutionResult
+            result = schema.execute(query_string) # https://docs.graphene-python.org/en/latest/_modules/graphql/execution/base/#ExecutionResult
             result_pretty = json.dumps(result.data, sort_keys=True, indent=4)
             return HttpResponse(result_pretty, content_type="application/json")
     else:
         form = AdvancedForm()
     context = {"form": form, "advanced_page": "active"}
     return render(request, 'bartocgraphql/advanced.html', context)
+
+def construct_query(form: AdvancedForm):
+    
+    pass
 
