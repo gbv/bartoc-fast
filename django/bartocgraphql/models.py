@@ -60,7 +60,7 @@ class Resource(models.Model):
             return result
         
         except asyncio.TimeoutError:
-            print(f'ASYNC {self.name} run out of time!') # dev
+            print(f'FETCH {self.name} run out of time!') # dev
             return Result(self.name, None, category)
 
 class SkosmosInstance(Resource):
@@ -93,7 +93,7 @@ class SkosmosInstance(Resource):
             data = await response.json()
 
             end = time.time() # dev
-            print(f'ASYNC {self.name} took {end - start}') # dev
+            print(f'FETCH {self.name} took {end - start}') # dev
 
             return Result(self.name, data, category)
 
@@ -126,7 +126,7 @@ class SparqlEndpoint(Resource):
         async with session.get(flatquery) as response:
             data = await response.json()
             end = time.time() # dev
-            print(f'ASYNC {self.name} took {end - start}') # dev
+            print(f'FETCH {self.name} took {end - start}') # dev
             return Result(self.name, data, category)
     
 # federation: 

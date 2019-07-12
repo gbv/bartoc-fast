@@ -25,6 +25,13 @@ class AdvancedForm(forms.Form):
                                                                        'class': 'form-control'}),
                                        max_value=60,
                                        min_value=1,
-                                       help_text="1 < n < 60",
+                                       help_text='1 < n < 60, default n = 5',
                                        required=False)
+
+    duplicates = forms.BooleanField(label='Display duplicates',
+                                           widget=forms.CheckboxInput(),
+                                           help_text='Check to keep duplicates between resources',
+                                           required=False,
+                                           label_suffix='')
+                                          
     

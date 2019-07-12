@@ -77,15 +77,17 @@ class Query(graphene.ObjectType):
     """ Query """
 
     results_global = graphene.List(GlobalResult,
-                                       searchword=graphene.String(required=True),
-                                       category=graphene.Argument(graphene.Int, default_value=0),
-                                       maxsearchtime=graphene.Argument(graphene.Int, default_value=STANDARD_TIME)) 
+                                   searchword=graphene.String(required=True),
+                                   category=graphene.Argument(graphene.Int, default_value=0),
+                                   maxsearchtime=graphene.Argument(graphene.Int, default_value=STANDARD_TIME),
+                                   duplicates=graphene.Argument(graphene.Boolean, default_value=False),
+                                   ) 
 
-    def resolve_results_global(self, info, searchword, category, maxsearchtime):
+    def resolve_results_global(self, info, searchword, category, maxsearchtime, duplicates):
         """ Resolve Global query type """
 
         start = time.time()                                 # dev
-        print(f'ASYNC **START')                             # dev
+        print(f'-->START')                                  # dev
 
         # initialize:
         # should already be done... if not, update federation manually
@@ -94,18 +96,20 @@ class Query(graphene.ObjectType):
         resources = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all())
         
         end_init = time.time()                              # dev
-        print(f'ASYNC *INITIALIZE took {end_init - start}') # dev
+        print(f'***INITIALIZE took {end_init - start}')     # dev
 
         # fetch data from resources as results:
         results = asyncio.run(fetch(resources, searchword, category, maxsearchtime))
         end_fetch = time.time()                             # dev
-        print(f'ASYNC *FETCH took {end_fetch - end_init}')  # dev
+        print(f'***FETCH took {end_fetch - end_init}')      # dev
 
         # normalize results:
-        globalresults = Normalize.normalize(results)
+        
+        globalresults = Normalize.normalize(results, duplicates)
         end = time.time()                                   # dev
-        print(f'ASYNC *NORMALIZE took {end - end_fetch}')   # dev
-        print(f'ASYNC **TOTAL took {end - start}')          # dev
+        print(f'***NORMALIZE took {end - end_fetch}')       # dev
+        print(f'***TOTAL took {end - start}')               # dev
+        print(f'<--STOP')                                   # dev
         return globalresults
 
 
@@ -126,16 +130,24 @@ class Normalize:
     """ Normalize results """
 
     @classmethod
-    def normalize(self, results: List[Result]) -> List[GlobalResult]: 
+    def normalize(self, results: List[Result], duplicates: bool = False) -> List[GlobalResult]: 
         """ Normalize results """
 
         globalresults = []
         for result in results:
+            start = time.time() # dev
             globalresult = self.select(result)
             globalresults.extend(globalresult)
-            
-        return self.purge(globalresults)
+            end = time.time() # dev
+            print(f'NORMALIZE {result.name} took {end - start}') # dev
 
+        howmany = len(globalresults) # dev
+        if duplicates == True:
+            globalresults = self.purge(globalresults)
+        print(f'TOTAL has {howmany - len(globalresults)} duplicates and {len(globalresults)} unique results') # dev
+            
+        return globalresults
+        
     @classmethod
     def select(self, result: Result) -> List[GlobalResult]: # not very nice yet
         """ Select and execute method for result """
@@ -188,7 +200,11 @@ class Normalize:
                 setattr(globalresult, field, fieldvalue)
                 globalresult.source = result.name
                 normalized.append(globalresult)
-            return self.purge(normalized)
+
+            howmany = len(normalized) # dev
+            normalized = self.purge(normalized)
+            print(f'{result.name} has {howmany - len(normalized)} duplicates and {len(normalized)} unique results') # dev
+            return normalized # self.purge(normalized) w/o dev
 
     @classmethod
     def skosmos(self, result: Result) -> List[GlobalResult]:
@@ -211,5 +227,10 @@ class Normalize:
                     setattr(globalresult, field, entry[field])  # we set each field of globalresult to the corresponding value in the entry
                 globalresult.source = result.name               # we set the source of globalresult to the name of the result (i.e., name of the resource where the result was queried)
                 normalized.append(globalresult)
-            return self.purge(normalized)
+
+            howmany = len(normalized) # dev
+            normalized = self.purge(normalized)
+            print(f'{result.name} has {howmany - len(normalized)} duplicates and {len(normalized)} unique results') # dev
+            return normalized # self.purge(normalized) w/o dev
+
     
