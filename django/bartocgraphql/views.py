@@ -90,6 +90,7 @@ def advanced(request):
 
             duplicates = form.cleaned_data['duplicates']
             query_string = query_string.replace(', DUPLICATES', f', duplicates: {str(duplicates).lower()}')
+            print(f'-->START') # dev
             print(query_string)
 
             # category = form.cleaned_data['category']

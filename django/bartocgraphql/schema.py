@@ -87,7 +87,6 @@ class Query(graphene.ObjectType):
         """ Resolve Global query type """
 
         start = time.time()                                 # dev
-        print(f'-->START')                                  # dev
 
         # initialize:
         # should already be done... if not, update federation manually
@@ -142,9 +141,9 @@ class Normalize:
             print(f'NORMALIZE {result.name} took {end - start}') # dev
 
         howmany = len(globalresults) # dev
-        if duplicates == True:
+        if duplicates == False:
             globalresults = self.purge(globalresults)
-        print(f'TOTAL has {howmany - len(globalresults)} duplicates and {len(globalresults)} unique results') # dev
+        print(f'TOTAL has {howmany - len(self.purge(globalresults))} duplicates and {len(self.purge(globalresults))} unique results') # dev
             
         return globalresults
         
