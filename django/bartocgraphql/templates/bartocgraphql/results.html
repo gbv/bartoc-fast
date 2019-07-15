@@ -1,0 +1,37 @@
+{% extends 'bartocgraphql/layouts/base.html' %}
+
+{% block content %}
+<h2>Results</h2>
+<p> Search word = <code>{{ arguments.searchword }}</code> ; maximum search time = <code>{{ arguments.maxsearchtime }}</code> ; display duplicates = <code>{{ arguments.duplicates }}</code> </p>
+<div class="table-responsive">
+	<table class="table table-hover table-sm text-left" >
+		<thead class="thead-light">
+			<tr>
+				<th>Nr</th>
+				<th>URI</th>
+				<th>prefLabel</th>
+				<th>altLabel</th>
+				<th>hiddenLabel</th>
+				<th>definition</th>
+				<th>Source</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for result in results %}
+			<tr>
+				<td>{{ forloop.counter }}</td>
+				<td> <a href="{{ result.uri }}">{{ result.uri }}</a></td>
+				<td>{{ result.prefLabel }}</td>
+				<td>{{ result.altLabel }}</td>
+				<td>{{ result.hiddenLabel }}</td>
+				<td>{{ result.definition }}</td>
+				<td>{{ result.source }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>    
+	</table>
+</div>
+
+{% endblock %}
+
+

@@ -2,5 +2,34 @@
 
 {% block content %}
   <h2>Data</h2>
-  <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor <code>invidunt</code> ut labore et dolore magna aliquyam erat.</p>
+  <p>The expected output of this search is a JSON file.</p> 
+	<form action="" type="post" class="was-validated">
+		<div class="form-row">
+			<div class="col-6">
+				<div class="form-group">
+					{{ form.searchword.label_tag }} {{ form.searchword }}
+					<div class="valid-feedback">Valid.</div>
+					<div class="invalid-feedback">Search word is required!</div>
+					<small class="form-text text-muted">{{ form.searchword.help_text }}</small>
+				</div>
+				
+			</div>
+			<div class="col-6">
+				<div class="form-group">
+					{{ form.maxsearchtime.label_tag }} {{ form.maxsearchtime }}
+					<div class="valid-feedback">Valid.</div>
+					<div class="invalid-feedback">Invalid input!</div>
+					<small class="form-text text-muted">{{ form.maxsearchtime.help_text }}</small>
+				</div>	
+			</div>
+		</div>	 
+		<div class="form-row">
+			<div class="col-12">
+				<div class="form-group">
+						{{ form.duplicates }} {{ form.duplicates.label_tag }}
+						<small class="form-text text-muted">{{ form.duplicates.help_text }}</small>
+				</div>	
+			</div>
+	  <button type="submit" class="btn btn-primary">Search</button>
+  </form> 
 {% endblock %}
