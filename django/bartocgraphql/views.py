@@ -57,7 +57,8 @@ def basic(request: HttpRequest) -> HttpResponse:
             result = schema.execute(query_string)
 
             results = result.data.get('resultsGlobal') # we just need the values of 'resultsGlobal'
-            context = {'basic_page': 'active', 'results': results} 
+            arguments = form.cleaned_data
+            context = {'basic_page': 'active', 'results': results, 'arguments': arguments} 
             return render(request, 'bartocgraphql/results.html', context)
     else:
         form = BasicForm()
@@ -121,19 +122,18 @@ def parse(form: Union[BasicForm, AdvancedForm]) -> str:
     # maxsearchtime:
     try:
         maxsearchtime = form.cleaned_data['maxsearchtime']
-    except KeyError:
+        assert maxsearchtime is not None
+    except (KeyError, AssertionError):
+        form.cleaned_data['maxsearchtime'] = STANDARD_TIME # to view arguments
         query_string = query_string.replace('MAXSEARCHTIME', f'maxsearchtime: {STANDARD_TIME}') # no form option
     else:
-        if maxsearchtime == None:
-            form.cleaned_data['maxsearchtime'] = STANDARD_TIME # to view arguments
-            query_string = query_string.replace('MAXSEARCHTIME', f'maxsearchtime: {STANDARD_TIME}') # form option off
-        else:
-            query_string = query_string.replace('MAXSEARCHTIME', f'maxsearchtime: {maxsearchtime}') # form option on
+        query_string = query_string.replace('MAXSEARCHTIME', f'maxsearchtime: {maxsearchtime}') # form option on/off
 
     # duplicates:
     try:
         duplicates = form.cleaned_data['duplicates']
     except KeyError:
+        form.cleaned_data['duplicates'] = STANDARD_DUPLICATES # to view arguments
         query_string = query_string.replace(', DUPLICATES', f', duplicates: {str(STANDARD_DUPLICATES).lower()}') # no form option
     else:
         query_string = query_string.replace(', DUPLICATES', f', duplicates: {str(duplicates).lower()}') # form option on/off
