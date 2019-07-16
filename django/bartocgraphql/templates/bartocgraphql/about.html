@@ -1,8 +1,34 @@
 {% extends 'bartocgraphql/layouts/base.html' %}
 
+{% load filter %}
+
 {% block content %}
   <h2>About</h2>
   <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor <code>invidunt</code> ut labore et dolore magna aliquyam erat.</p>
+  <h3>Federation</h3>
+  <p>The federation contains {{ federation|get_len }} resources on the {% now "jS \o\f F, Y" %}:</p>
+  <div class="table-responsive">
+    <table class="table table-hover table-sm text-left" >
+      <thead class="thead-light">
+        <tr>
+          <th>Nr</th>
+          <th>Name</th>
+          <th>Type</th>
+          <th>URL</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for resource in federation %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ resource.name }}</td>
+          <td>{{ resource|get_type }}</td>
+          <td><a href="{{ resource.url }}">{{ resource.url }}</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>    
+    </table>
+  </div>
 {% endblock %}
 
 

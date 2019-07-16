@@ -8,9 +8,10 @@ import graphene
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
-from .forms import BasicForm, AdvancedForm  # local
-from .schema import Query                   # local
-from .utility import STANDARD_TIME, STANDARD_DUPLICATES # local
+from .forms import BasicForm, AdvancedForm  
+from .models import SkosmosInstance, SparqlEndpoint
+from .schema import Query                   
+from .utility import STANDARD_TIME, STANDARD_DUPLICATES
 
 QUERYSTRING = '''{
     resultsGlobal(SEARCHWORD, MAXSEARCHTIME, DUPLICATES) {
@@ -32,7 +33,10 @@ def index(request: HttpRequest) -> HttpResponse:
 def about(request: HttpRequest) -> HttpResponse:
     """ About page """
 
-    context = {'about_page': 'active'}
+    federation = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all()) # perhaps a FEDERATION constant in models or utility?
+    federation.sort(key=lambda x: x.name, reverse=False)
+
+    context = {'about_page': 'active', 'federation': federation}
     return render(request, 'bartocgraphql/about.html', context)
 
 def feedback(request: HttpRequest) -> HttpResponse:
