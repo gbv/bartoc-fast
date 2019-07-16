@@ -125,6 +125,7 @@ def parse(form: Union[BasicForm, AdvancedForm]) -> str:
         query_string = query_string.replace('MAXSEARCHTIME', f'maxsearchtime: {STANDARD_TIME}') # no form option
     else:
         if maxsearchtime == None:
+            form.cleaned_data['maxsearchtime'] = STANDARD_TIME # to view arguments
             query_string = query_string.replace('MAXSEARCHTIME', f'maxsearchtime: {STANDARD_TIME}') # form option off
         else:
             query_string = query_string.replace('MAXSEARCHTIME', f'maxsearchtime: {maxsearchtime}') # form option on
