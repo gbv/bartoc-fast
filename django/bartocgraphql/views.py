@@ -115,7 +115,7 @@ def data(request: HttpRequest) -> HttpResponse:
     return render(request, 'bartocgraphql/data.html', context)
 
 def parse(form: Union[BasicForm, AdvancedForm]) -> str:
-    """ Update QUERYSTRING with arguments from form (if any) """
+    """ Update QUERYSTRING with arguments from form (if any) or default values """
 
     query_string = QUERYSTRING
 
@@ -128,7 +128,7 @@ def parse(form: Union[BasicForm, AdvancedForm]) -> str:
         maxsearchtime = form.cleaned_data['maxsearchtime']
         assert maxsearchtime is not None
     except (KeyError, AssertionError):
-        form.cleaned_data['maxsearchtime'] = DEF_MAXSEARCHTIME # to view arguments
+        form.cleaned_data['maxsearchtime'] = DEF_MAXSEARCHTIME # context
         query_string = query_string.replace('MAXSEARCHTIME', f'maxsearchtime: {DEF_MAXSEARCHTIME}') # no form option
     else:
         query_string = query_string.replace('MAXSEARCHTIME', f'maxsearchtime: {maxsearchtime}') # form option on/off
@@ -137,7 +137,7 @@ def parse(form: Union[BasicForm, AdvancedForm]) -> str:
     try:
         duplicates = form.cleaned_data['duplicates']
     except KeyError:
-        form.cleaned_data['duplicates'] = DEF_DUPLICATES # to view arguments
+        form.cleaned_data['duplicates'] = DEF_DUPLICATES # context
         query_string = query_string.replace(', DUPLICATES', f', duplicates: {str(DEF_DUPLICATES).lower()}') # no form option
     else:
         query_string = query_string.replace(', DUPLICATES', f', duplicates: {str(duplicates).lower()}') # form option on/off
