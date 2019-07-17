@@ -1,8 +1,10 @@
 {% extends 'bartocgraphql/layouts/base.html' %}
 
+{% load filter %}
+
 {% block content %}
-<h2>Results</h2>
-<p> Search word = <code>{{ arguments.searchword }}</code> ; maximum search time = <code>{{ arguments.maxsearchtime }}</code> ; display duplicates = <code>{{ arguments.duplicates }}</code> </p>
+<h2>{{ results|get_len }} results</h2>
+<p> search word = <code>{{ arguments.searchword }}</code> ; maximum search time = <code>{{ arguments.maxsearchtime }}</code> ; display duplicates = <code>{{ arguments.duplicates }}</code> </p>
 <div class="table-responsive">
 	<table class="table table-hover table-sm text-left" >
 		<thead class="thead-light">
