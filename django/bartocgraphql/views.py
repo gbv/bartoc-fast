@@ -11,7 +11,7 @@ from django.shortcuts import render
 from .forms import BasicForm, AdvancedForm  
 from .models import SkosmosInstance, SparqlEndpoint
 from .schema import Query                   
-from .utility import STANDARD_TIME, STANDARD_DUPLICATES
+from .utility import DEF_MAXSEARCHTIME, DEF_DUPLICATES
 
 QUERYSTRING = '''{
     resultsGlobal(SEARCHWORD, MAXSEARCHTIME, DUPLICATES) {
@@ -128,8 +128,8 @@ def parse(form: Union[BasicForm, AdvancedForm]) -> str:
         maxsearchtime = form.cleaned_data['maxsearchtime']
         assert maxsearchtime is not None
     except (KeyError, AssertionError):
-        form.cleaned_data['maxsearchtime'] = STANDARD_TIME # to view arguments
-        query_string = query_string.replace('MAXSEARCHTIME', f'maxsearchtime: {STANDARD_TIME}') # no form option
+        form.cleaned_data['maxsearchtime'] = DEF_MAXSEARCHTIME # to view arguments
+        query_string = query_string.replace('MAXSEARCHTIME', f'maxsearchtime: {DEF_MAXSEARCHTIME}') # no form option
     else:
         query_string = query_string.replace('MAXSEARCHTIME', f'maxsearchtime: {maxsearchtime}') # form option on/off
 
@@ -137,8 +137,8 @@ def parse(form: Union[BasicForm, AdvancedForm]) -> str:
     try:
         duplicates = form.cleaned_data['duplicates']
     except KeyError:
-        form.cleaned_data['duplicates'] = STANDARD_DUPLICATES # to view arguments
-        query_string = query_string.replace(', DUPLICATES', f', duplicates: {str(STANDARD_DUPLICATES).lower()}') # no form option
+        form.cleaned_data['duplicates'] = DEF_DUPLICATES # to view arguments
+        query_string = query_string.replace(', DUPLICATES', f', duplicates: {str(DEF_DUPLICATES).lower()}') # no form option
     else:
         query_string = query_string.replace(', DUPLICATES', f', duplicates: {str(duplicates).lower()}') # form option on/off
 

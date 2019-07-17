@@ -9,7 +9,7 @@ from aiohttp import ClientSession
 
 from .models import SkosmosInstance, SparqlEndpoint
 
-from .utility import Result, MappingDatabase, STANDARD_TIME # local
+from .utility import Result, MappingDatabase, DEF_MAXSEARCHTIME # local
 
 class GlobalResult(graphene.ObjectType):
     """ Result of a Global (with capital G) query """
@@ -79,7 +79,7 @@ class Query(graphene.ObjectType):
     results_global = graphene.List(GlobalResult,
                                    searchword=graphene.String(required=True),
                                    category=graphene.Argument(graphene.Int, default_value=0),
-                                   maxsearchtime=graphene.Argument(graphene.Int, default_value=STANDARD_TIME),
+                                   maxsearchtime=graphene.Argument(graphene.Int, default_value=DEF_MAXSEARCHTIME),
                                    duplicates=graphene.Argument(graphene.Boolean, default_value=False),
                                    ) 
 
@@ -115,7 +115,7 @@ class Query(graphene.ObjectType):
 async def fetch(resources: List[Union[SkosmosInstance, SparqlEndpoint]],
                 searchword: str,
                 category: int = 0,
-                maxsearchtime: int = STANDARD_TIME) -> List[Result]:
+                maxsearchtime: int = DEF_MAXSEARCHTIME) -> List[Result]:
     """ Coroutine: fetch data from resources as results """
 
     async with ClientSession() as session:

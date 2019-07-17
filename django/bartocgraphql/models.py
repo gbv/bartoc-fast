@@ -9,7 +9,7 @@ from openpyxl import load_workbook
 from SPARQLWrapper import (SPARQLWrapper, JSON)
 from urllib import parse
 
-from .utility import Database, Entry, Result, STANDARD_TIME, LOCAL_APP_PATH
+from .utility import Database, Entry, Result, DEF_MAXSEARCHTIME, LOCAL_APP_PATH
 
 # queries:
 class Query(models.Model): # confusing, same name as schema.Query
@@ -54,7 +54,7 @@ class Resource(models.Model):
                    session: ClientSession,
                    searchword: str,
                    category: int = 0,
-                   maxsearchtime: int = STANDARD_TIME) -> Result:
+                   maxsearchtime: int = DEF_MAXSEARCHTIME) -> Result:
         """ Coroutine: send time sensitive query to resource """
 
         try:
