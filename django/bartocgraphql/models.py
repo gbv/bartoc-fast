@@ -25,8 +25,14 @@ class Query(models.Model): # confusing, same name as schema.Query
 
 class SparqlQuery(Query):
     """ A SPARQL query """
+
+    class Meta:
+        verbose_name_plural = 'Sparql queries'
     
     sparqlendpoint = models.ForeignKey("SparqlEndpoint", on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return f'{self.sparqlendpoint.name} category {self.category}'
 
     def update(self, searchword: str) -> str:
         """ Put the searchword into the query """
@@ -35,8 +41,14 @@ class SparqlQuery(Query):
 
 class SkosmosQuery(Query):
     """ A SPARQL query """
+
+    class Meta:
+        verbose_name_plural = 'Skosmos queries'
     
     skosmosinstance = models.ForeignKey("SkosmosInstance", on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return f'{self.skosmosinstance.name} category {self.category}'
 
 # resources:
 class Resource(models.Model):
@@ -49,6 +61,9 @@ class Resource(models.Model):
 
     class Meta:
         abstract = True
+
+    def __str__(self) -> str:
+        return f'{self.name}'
 
     async def main(self,
                    session: ClientSession,
@@ -73,7 +88,7 @@ class SkosmosInstance(Resource):
         
         return SkosmosQuery.objects.get(skosmosinstance=self, category=category)
 
-    def clean(self, searchword: str) -> str:
+    def __clean(self, searchword: str) -> str: # avoid naming conflict with Django admin
         """ Prepare searchword for search """
 
         return parse.quote(searchword)   
@@ -84,7 +99,7 @@ class SkosmosInstance(Resource):
         start = time.time() # dev
         query = self.select(category)
 
-        searchword = self.clean(searchword)
+        searchword = self.__clean(searchword)
         
         if query.timeout == 1:
             return Result(self.name, None, category)
@@ -135,6 +150,12 @@ class SparqlEndpoint(Resource):
 class Federation(models.Model):
     """ The federation of resources (there is only one) """
     created = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = 'federation'
+
+    def __str__(self) -> str:
+        return 'Main federation'
 
     def populate_skosmosinstances(self) -> None: 
         """ Populate federation with Skosmos instances and their queries """
