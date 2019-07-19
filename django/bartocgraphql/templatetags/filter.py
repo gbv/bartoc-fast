@@ -11,7 +11,7 @@ def get_type(resource: Union[SkosmosInstance, SparqlEndpoint]) -> str:
     """ Return the type of a resource"""
     
     if isinstance(resource, SkosmosInstance):
-        return "SKOSMOS"
+        return "Skosmos"
     if isinstance(resource, SparqlEndpoint):
         return "SPARQL"
 

@@ -73,12 +73,11 @@ class MappingDatabase(Database):
         for mapping in self.entries:
             if mapping.field == field:
                 return mapping
-            
+
     def select_by_uri(self, uri: str) -> Mapping:
-        """ Select mapping by uri """
 
         for mapping in self.entries:
-            if mapping.uri in mapping.equivalences:
+            if uri in mapping.equivalences:
                 return mapping
 
 class Mapping:

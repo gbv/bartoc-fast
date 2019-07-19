@@ -1,0 +1,1330 @@
+{
+  "head" : {
+    "vars" : [ "subject", "predicate", "object" ]
+  },
+  "results" : {
+    "bindings" : [ {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734505"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle, The"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734505"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "The Turtle"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734505"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle, The"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734505"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#altLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "The Turtle"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/7820952"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Turtle, The"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/7820952"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "The Turtle"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/7820952"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Turtle, The"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/7820952"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#altLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "The Turtle"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/aat/300417710"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "turtle shell"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/aat/300417710"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "shell, turtle"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/aat/300417710"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "turtle shell"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/aat/300417710"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#altLabel"
+      },
+      "object" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "shell, turtle"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/1010369"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Islands"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/1010369"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Island"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/1010369"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Islands"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/1010369"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#altLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Island"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734442"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Mountain"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734442"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Mountains"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734442"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Mountains"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734442"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#altLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Mountain"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/1108266"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Mountain"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/1108266"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Mountains"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/1108266"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Mountains"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/1108266"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#altLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Mountain"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734322"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734322"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Run"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734322"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734322"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#altLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Run"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/7820939"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Turtle Island"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/7820939"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Turtle Islet"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/7820939"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Turtle Islet"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/7820939"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#altLabel"
+      },
+      "object" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Turtle Island"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/7820938"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Turtle Island"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/7820938"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Turtle Islet"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/7820938"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Turtle Island"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/7820938"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#altLabel"
+      },
+      "object" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Turtle Islet"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/7820937"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Turtle Island"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/7820937"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Turtle Islet"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/7820937"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Turtle Island"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/7820937"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#altLabel"
+      },
+      "object" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Turtle Islet"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/7820953"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Turtle, Mount"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/7820953"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Mount Turtle"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/7820953"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Turtle, Mount"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/7820953"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#altLabel"
+      },
+      "object" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Mount Turtle"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734311"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734311"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734308"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734308"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734309"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734309"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734310"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734310"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734294"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734294"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734320"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734320"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734409"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Lake"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734409"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Lake"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734264"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Butte"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734264"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Butte"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734303"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734303"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734276"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Cove"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734276"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Cove"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734297"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734297"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734319"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734319"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734480"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle River"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734480"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle River"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734328"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734328"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734290"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734290"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734293"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734293"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734455"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Pond"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734455"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Pond"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734261"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Brook"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734261"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Brook"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734395"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Lake"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734395"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Lake"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734392"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Lake"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734392"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Lake"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734355"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Island"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734355"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Island"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734292"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734292"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734419"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Lake"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734419"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Lake"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734502"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Tank"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734502"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Tank"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734384"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Lake"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734384"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Lake"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734313"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734313"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Creek"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734408"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Lake"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734408"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Lake"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734420"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Lake"
+      }
+    }, {
+      "subject" : {
+        "type" : "uri",
+        "value" : "http://vocab.getty.edu/tgn/2734420"
+      },
+      "predicate" : {
+        "type" : "uri",
+        "value" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+      },
+      "object" : {
+        "type" : "literal",
+        "value" : "Turtle Lake"
+      }
+    } ]
+  }
+}

@@ -48,25 +48,14 @@ class GlobalResult(graphene.ObjectType):
         
         A = set(dir(graphene.ObjectType))
         B = set(dir(GlobalResult))
-        C = B.difference(A)
-        C.remove('_meta')
-        return C
+        attributes = B.difference(A)
+        attributes.remove('_meta')
+        for method in ["fields", "select_field"]:
+            attributes.remove(method)
+        return attributes
 
     @classmethod
-    def flat(self, field: str) -> str:
-        """ Return flat field (if any) """
-        
-        try:
-            assert(field in self.fields())
-        except AssertionError:
-            return None
-        else:
-            mappings = MappingDatabase() # !dev: replace with model
-            mapping = mappings.select_by_field(field)
-            return mapping.uri
-
-    @classmethod
-    def select(self, uri: str) -> str:
+    def select_field(self, uri: str) -> str:
         """ Select (the name of a) field by uri """
 
         mappings = MappingDatabase()
@@ -98,13 +87,13 @@ class Query(graphene.ObjectType):
         print(f'***INITIALIZE took {end_init - start}')     # dev
 
         # fetch data from resources as results:
-        results = asyncio.run(fetch(resources, searchword, category, maxsearchtime))
+        results = asyncio.run(fetch(resources, searchword, category, maxsearchtime), debug=True)
         end_fetch = time.time()                             # dev
         print(f'***FETCH took {end_fetch - end_init}')      # dev
 
         # normalize results:
         
-        globalresults = Normalize.normalize(results, duplicates)
+        globalresults = Normalize.main(results, duplicates)
         end = time.time()                                   # dev
         print(f'***NORMALIZE took {end - end_fetch}')       # dev
         print(f'***TOTAL took {end - start}')               # dev
@@ -129,13 +118,13 @@ class Normalize:
     """ Normalize results """
 
     @classmethod
-    def normalize(self, results: List[Result], duplicates: bool = False) -> List[GlobalResult]: 
+    def main(self, results: List[Result], duplicates: bool = False) -> List[GlobalResult]: 
         """ Normalize results """
 
         globalresults = []
         for result in results:
             start = time.time() # dev
-            globalresult = self.select(result)
+            globalresult = self.normalize(result)
             globalresults.extend(globalresult)
             end = time.time() # dev
             print(f'NORMALIZE {result.name} took {end - start}') # dev
@@ -148,71 +137,76 @@ class Normalize:
         return globalresults
         
     @classmethod
-    def select(self, result: Result) -> List[GlobalResult]: # not very nice yet
-        """ Select and execute method for result """
+    def normalize(self, result: Result) -> List[GlobalResult]: # not very nice yet
+        """ Normalize result (select and execute method) """
 
-        skosmosnames = ["AgroVoc", "Bartoc", "data.ub.uio.no", "Finto", "Legilux", "MIMO", "UNESCO", "OZCAR-Theia", "Loterre"]
+        skosmosnames = []
+        for instance in SkosmosInstance.objects.all():
+            skosmosnames.append(instance.name)
+
+        sparqlnames = []
+        for endpoint in SparqlEndpoint.objects.all():
+            sparqlnames.append(endpoint.name)
 
         if result.data == None: # here we catch timed out resources
             return []
         elif result.name in skosmosnames:
-            return self.skosmos(result)
-        elif result.name == "Getty":
-            return self.getty(result)
-        elif result.name == "LuSTRE":
-            return self.lustre(result)
+            return self.normalize_skosmos(result)
+        elif result.name in sparqlnames:
+            return self.normalize_sparql(result)
         else:
             raise NameError
 
     @classmethod
-    def purge(self, globalresults: List[GlobalResult]) -> List[GlobalResult]:
-        """ Delete duplicates """
-
-        globalresults = set(globalresults)
-        return list(globalresults)
-
-    @classmethod
-    def getty(self, result):
-        """ Normalize Getty data """
-
-        return []
-
-    @classmethod
-    def lustre(self, result: Result) -> List[GlobalResult]:
-        """ Normalize LuSTRE data """
+    def normalize_sparql(self, result: Result) -> List[GlobalResult]:
+        """ Normalize SPARQL data """
 
         try:
-            result.data['results']['bindings'] # here data format (perhaps also @context) could be verified; select already excludes None data
+            result.data['results']['bindings']
         except KeyError:
-            print(f'ERROR: Something is wrong with Normalize.{result.name}!')
+            print(f'ERROR: Something is wrong with Normalize.normalize_sparql{result.name}!')
             return []
         else:
             bindings = result.data['results']['bindings']
             normalized = []
             for binding in bindings:  
                 globalresult = GlobalResult()
-                resulturi = binding["subject"]["value"]     # eg: "subject": { "type": "uri", "value": "http://www.eionet.europa.eu/gemet/group/8603" }
-                globalresult.uri = resulturi
-                fielduri = binding["predicate"]["value"]    # eg: "predicate": { "type": "uri", "value": "http://www.w3.org/2000/01/rdf-schema#label" }	
-                fieldvalue = binding["object"]["value"]     # eg: "object": { "type": "literal", "xml:lang": "en", "value": "TRAFFIC, TRANSPORTATION" }
-                field = GlobalResult.select(fielduri)
-                setattr(globalresult, field, fieldvalue)
-                globalresult.source = result.name
-                normalized.append(globalresult)
+                subject = binding["subject"]["value"]       # eg: "subject": { "type": "uri", "value": "http://www.eionet.europa.eu/gemet/group/8603" }
+                predicate = binding["predicate"]["value"]   # eg: "predicate": { "type": "uri", "value": "http://www.w3.org/2000/01/rdf-schema#label" }	
+                obj = binding["object"]["value"]            # eg: "object": { "type": "literal", "xml:lang": "en", "value": "TRAFFIC, TRANSPORTATION" }
 
+                globalresult.uri = subject
+                field = GlobalResult.select_field(predicate)
+
+                # check if globalresult (defined by uri) is already collected:
+                if globalresult in normalized:
+                    normal = normalized[normalized.index(globalresult)]
+
+                    # check if field is still empty:
+                    try:
+                        assert(getattr(normal, field) == None)
+                    except AssertionError:
+                        pass
+                    else:
+                        setattr(normal, field, obj)
+                else:
+                    setattr(globalresult, field, obj)
+                    globalresult.source = result.name
+                    normalized.append(globalresult)
+                    
             howmany = len(normalized) # dev
             normalized = self.purge(normalized)
             print(f'{result.name} has {howmany - len(normalized)} duplicates and {len(normalized)} unique results') # dev
             return normalized # self.purge(normalized) w/o dev
 
     @classmethod
-    def skosmos(self, result: Result) -> List[GlobalResult]:
+    def normalize_skosmos(self, result: Result) -> List[GlobalResult]:
         """ Normalize Skosmos data """
 
         try:
             result.data['results'] # here data format (perhaps also @context) could be verified; select already excludes None data
         except KeyError:
-            print(f'ERROR: Something is wrong with Normalize.{result.name}!')
+            print(f'ERROR: Something is wrong with Normalize.normalize_skosmos{result.name}!')
             return []
         else:
             normalized = []
@@ -231,5 +225,10 @@ class Normalize:
             normalized = self.purge(normalized)
             print(f'{result.name} has {howmany - len(normalized)} duplicates and {len(normalized)} unique results') # dev
             return normalized # self.purge(normalized) w/o dev
+        
+    @classmethod
+    def purge(self, globalresults: List[GlobalResult]) -> List[GlobalResult]:
+        """ Delete duplicates """
 
-    
+        globalresults = set(globalresults)
+        return list(globalresults)    
