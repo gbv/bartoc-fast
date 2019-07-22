@@ -5,7 +5,7 @@ import asyncio
 from typing import List, Set, Dict, Tuple, Optional, Union
 
 import graphene
-from aiohttp import ClientSession
+from aiohttp import ClientSession, ClientTimeout
 
 from .models import SkosmosInstance, SparqlEndpoint
 
@@ -107,9 +107,10 @@ async def fetch(resources: List[Union[SkosmosInstance, SparqlEndpoint]],
                 maxsearchtime: int = DEF_MAXSEARCHTIME) -> List[Result]:
     """ Coroutine: fetch data from resources as results """
 
-    async with ClientSession() as session:
+    timeout = ClientTimeout(total=maxsearchtime)
+    async with ClientSession(timeout=timeout) as session:
 
-        results = await asyncio.gather(*[resource.main(session, searchword, category, maxsearchtime) for resource in resources])
+        results = await asyncio.gather(*[resource.main(session, searchword, category) for resource in resources])
         await session.close()
 
         return results

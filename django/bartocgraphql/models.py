@@ -4,7 +4,7 @@ import time # dev
 import asyncio
 
 from django.db import models # https://docs.djangoproject.com/en/2.2/ref/models/fields/#django.db.models.Field
-from aiohttp import ClientSession
+from aiohttp import ClientSession, ClientTimeout
 from openpyxl import load_workbook
 from SPARQLWrapper import (SPARQLWrapper, JSON)
 from urllib import parse
@@ -68,12 +68,11 @@ class Resource(models.Model):
     async def main(self,
                    session: ClientSession,
                    searchword: str,
-                   category: int = 0,
-                   maxsearchtime: int = DEF_MAXSEARCHTIME) -> Result:
+                   category: int = 0) -> Result:
         """ Coroutine: send time sensitive query to resource """
 
         try:
-            result = await asyncio.wait_for(self.search(session, searchword, category), timeout=maxsearchtime)
+            result = await self.search(session, searchword, category)
             return result
         
         except asyncio.TimeoutError:
@@ -93,7 +92,10 @@ class SkosmosInstance(Resource):
 
         return parse.quote(searchword)   
 
-    async def search(self, session: ClientSession, searchword: str, category: int = 0) -> Result:
+    async def search(self,
+                     session: ClientSession,
+                     searchword: str,
+                     category: int = 0) -> Result:
         """ Coroutine: send query to Skosmos instance """
 
         start = time.time() # dev
@@ -103,7 +105,7 @@ class SkosmosInstance(Resource):
         
         if query.timeout == 1:
             return Result(self.name, None, category)
-        
+
         restapi = self.url + query.querystring + searchword
         async with session.get(restapi) as response:
             
@@ -120,9 +122,12 @@ class SparqlEndpoint(Resource):
     def select(self, category: int) -> SparqlQuery:
         """ Select SPARQL query by category """ 
         
-        return SparqlQuery.objects.get(sparqlendpoint=self, category=category)     
+        return SparqlQuery.objects.get(sparqlendpoint=self, category=category)
 
-    async def search(self, session: ClientSession, searchword: str, category: int = 0) -> Result:
+    async def search(self,
+                     session: ClientSession,
+                     searchword: str,
+                     category: int = 0) -> Result:
         """ Coroutine: send query to SPARQL endpoint """
 
         start = time.time() # dev
@@ -133,19 +138,22 @@ class SparqlEndpoint(Resource):
 
         querystring = query.update(searchword)
 
-        # we just want the flat query, not the request...
-        sparqlwrapper = SPARQLWrapper(self.url)
-        sparqlwrapper.setQuery(querystring)
-        sparqlwrapper.setReturnFormat(JSON)
-        flatquery = sparqlwrapper.query().geturl()
+        # use SPARQLWrapper to parse querystring:
+        wrapper = SPARQLWrapper(self.url)
+        wrapper.setQuery(querystring)
+        wrapper.setReturnFormat(JSON)
+        request = wrapper._createRequest()
+        parsed_query = request.get_full_url()
 
-        # ...because the request is done here
-        async with session.get(flatquery) as response:
+        async with session.get(parsed_query) as response:
+
             data = await response.json()
+
             end = time.time() # dev
             print(f'FETCH {self.name} took {end - start}') # dev
+
             return Result(self.name, data, category)
-    
+
 # federation: 
 class Federation(models.Model):
     """ The federation of resources (there is only one) """
