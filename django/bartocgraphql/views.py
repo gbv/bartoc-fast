@@ -107,6 +107,7 @@ def data(request: HttpRequest) -> HttpResponse:
  
             schema = graphene.Schema(query=Query)
             result = schema.execute(query_string)
+            
             result_pretty = json.dumps(result.data, sort_keys=True, indent=4)
             return HttpResponse(result_pretty, content_type='application/json')
     else:
