@@ -69,7 +69,7 @@ class Resource(models.Model):
                    session: ClientSession,
                    searchword: str,
                    category: int = 0) -> Result:
-        """ Coroutine: send time sensitive query to resource """
+        """ Coroutine: send query to resource """
 
         try:
             result = await self.search(session, searchword, category)
@@ -215,4 +215,4 @@ class Federation(models.Model):
         self.populate_skosmosinstances()
         self.populate_sparqlendpoints()
 
-        
+            

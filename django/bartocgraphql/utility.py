@@ -8,6 +8,7 @@ from openpyxl import load_workbook
 LOCAL_APP_PATH = "//itsc-pg2.storage.p.unibas.ch/ub-home$/hinder0000/Documents/GitHub/bartocgraphql/django/bartocgraphql/" # local app path
 DEF_MAXSEARCHTIME = 5 # default search time in seconds
 DEF_DUPLICATES = False # default value for duplicates argument
+DEF_DISABLED = [] # default value for disabled resources
 
 class Database:
     """ A database """

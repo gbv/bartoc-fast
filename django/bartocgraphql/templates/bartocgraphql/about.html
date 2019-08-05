@@ -4,9 +4,8 @@
 
 {% block content %}
   <h2>About</h2>
-  <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor <code>invidunt</code> ut labore et dolore magna aliquyam erat.</p>
-  <h3>Federation</h3>
-  <p>The federation contains {{ federation|get_len }} resources on the {% now "jS \o\f F, Y" %}:</p>
+  <p> BARTOC-GraphQL is a meta search engine. It uses GraphQL to conduct asyncronous federated searches accessing {{ federation|get_len }} remote resources comprising over 3000 vocabularies. This service is being developed by the <a href="https://www.ub.unibas.ch/ub-hauptbibliothek/"> University Library Basel</a>. For more information, please visit our <a href="https://github.com/MHindermann/bartocgraphql"> GitHub repository</a>. If you encounter any problems or have improvement ideas, please contact us.</p>
+  <p>On the {% now "jS \o\f F, Y" %} BARTOC-GraphQL has access to the following resources:</p>
   <div class="table-responsive">
     <table class="table table-hover table-sm text-left" >
       <thead class="thead-light">

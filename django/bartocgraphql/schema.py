@@ -9,7 +9,7 @@ from aiohttp import ClientSession, ClientTimeout
 
 from .models import SkosmosInstance, SparqlEndpoint
 
-from .utility import Result, MappingDatabase, DEF_MAXSEARCHTIME # local
+from .utility import Result, MappingDatabase, DEF_MAXSEARCHTIME, DEF_DISABLED # local
 
 class GlobalResult(graphene.ObjectType):
     """ Result of a Global (with capital G) query """
@@ -70,9 +70,10 @@ class Query(graphene.ObjectType):
                                    category=graphene.Argument(graphene.Int, default_value=0),
                                    maxsearchtime=graphene.Argument(graphene.Int, default_value=DEF_MAXSEARCHTIME),
                                    duplicates=graphene.Argument(graphene.Boolean, default_value=False),
-                                   ) 
+                                   disabled=graphene.Argument(graphene.List(graphene.String), default_value=DEF_DISABLED)
+                                   )
 
-    def resolve_results_global(self, info, searchword, category, maxsearchtime, duplicates):
+    def resolve_results_global(self, info, searchword, category, maxsearchtime, duplicates, disabled):
         """ Resolve Global query type """
 
         start = time.time()                                 # dev
@@ -82,7 +83,14 @@ class Query(graphene.ObjectType):
 
         # access resources in federation:
         resources = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all())
-        
+
+        # remove disabled resources
+        while len(disabled) > 0:
+            for resource in resources:
+                if resource.name in disabled:
+                    resources.remove(resource)
+                    disabled.remove(resource.name)
+                            
         end_init = time.time()                              # dev
         print(f'***INITIALIZE took {end_init - start}')     # dev
 

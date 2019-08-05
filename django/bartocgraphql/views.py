@@ -11,10 +11,10 @@ from django.shortcuts import render
 from .forms import BasicForm, AdvancedForm  
 from .models import SkosmosInstance, SparqlEndpoint
 from .schema import Query                   
-from .utility import DEF_MAXSEARCHTIME, DEF_DUPLICATES
+from .utility import DEF_MAXSEARCHTIME, DEF_DUPLICATES, DEF_DISABLED
 
 QUERYSTRING = '''{
-    resultsGlobal(SEARCHWORD, MAXSEARCHTIME, DUPLICATES) {
+    resultsGlobal(SEARCHWORD, MAXSEARCHTIME, DUPLICATES, DISABLED) {
     uri
     prefLabel
     altLabel
@@ -128,10 +128,10 @@ def parse(form: Union[BasicForm, AdvancedForm]) -> str:
         maxsearchtime = form.cleaned_data['maxsearchtime']
         assert maxsearchtime is not None
     except (KeyError, AssertionError):
-        form.cleaned_data['maxsearchtime'] = DEF_MAXSEARCHTIME # context
-        query_string = query_string.replace('MAXSEARCHTIME', f'maxsearchtime: {DEF_MAXSEARCHTIME}') # no form option
+        form.cleaned_data['maxsearchtime'] = DEF_MAXSEARCHTIME # pass to context
+        query_string = query_string.replace('MAXSEARCHTIME', f'maxsearchtime: {DEF_MAXSEARCHTIME}') # no form option (see basic)
     else:
-        query_string = query_string.replace('MAXSEARCHTIME', f'maxsearchtime: {maxsearchtime}') # form option on/off
+        query_string = query_string.replace('MAXSEARCHTIME', f'maxsearchtime: {maxsearchtime}') # form option on/off (see advanced)
 
     # duplicates:
     try:
@@ -141,6 +141,16 @@ def parse(form: Union[BasicForm, AdvancedForm]) -> str:
         query_string = query_string.replace(', DUPLICATES', f', duplicates: {str(DEF_DUPLICATES).lower()}') # no form option
     else:
         query_string = query_string.replace(', DUPLICATES', f', duplicates: {str(duplicates).lower()}') # form option on/off
+
+    # disabled resources:
+    try:
+        disabled = form.cleaned_data['disabled']
+    except KeyError:
+        form.cleaned_data['disabled'] = DEF_DISABLED # context
+        query_string = query_string.replace(', DISABLED', f', disabled: {DEF_DISABLED}') # no form option
+    else:
+        disabled = str(disabled).replace('\'', '"')
+        query_string = query_string.replace(', DISABLED', f', disabled: {disabled}') # form option on/off      
 
     # category:
     # category = form.cleaned_data['category']

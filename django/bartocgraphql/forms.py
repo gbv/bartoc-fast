@@ -1,4 +1,19 @@
+from typing import List, Union
+
 from django import forms
+
+from .models import SkosmosInstance, SparqlEndpoint
+
+def make_choices() -> List[Union[SkosmosInstance, SparqlEndpoint]]:
+    """ Return list of all resources in federation """
+    
+    resources = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all())
+    choices = []
+    for resource in resources:
+        choices.append((resource.name, resource.name))
+    return choices
+
+CHOICES = make_choices()
 
 class BasicForm(forms.Form):
     """ Basic form """
@@ -33,5 +48,12 @@ class AdvancedForm(forms.Form):
                                            help_text='Check to keep duplicates between resources',
                                            required=False,
                                            label_suffix='')
+
+    disabled = forms.MultipleChoiceField(label='Disable resources',
+                                          widget=forms.SelectMultiple(attrs={'style': 'width: 100%'}),
+                                          help_text='Hold ctrl or shift (or drag with the mouse) to select more than one',
+                                          required=False,
+                                          choices=CHOICES)
+                                          
                                           
     
