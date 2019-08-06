@@ -1,0 +1,18 @@
+Requires python3.7 (https://linuxize.com/post/how-to-install-python-3-7-on-ubuntu-18-04/) and pip3.7 (https://stackoverflow.com/questions/54633657/how-to-install-pip-for-python-3-7-on-ubuntu-18).
+
+A. login:
+1. $PS ssh hinder0000@ub-epic3.ub.unibas.ch
+
+B. install/update dependencies:
+1. $PS pip3.7 install -r requirements.txt --user (@ ~/git_environment/bartocgraphql/docs)
+
+C. run development server:
+1. $PS python3.7 manage.py runserver (@ ~/git_environment/bartocgraphql/django)
+
+D. error handling:
+-> django.db.utils.OperationalError: no such table: ...
+1. $PS rm db.sqlite3 (@ ~/git_environment/bartocgraphql/django)
+2. $PS rm -rf __pycache__ (@ ~/git_environment/bartocgraphql/django/main)
+3. $PS rm -rf __pycache__ (@ ~/git_environment/bartocgraphql/django/bartocgraphql)
+4. Remove all migrations (not __init__.py) (@ ~/git_environment/bartocgraphql/django/bartocgraphql/migrations)
+5. ...
