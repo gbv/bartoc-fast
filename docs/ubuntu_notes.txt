@@ -8,11 +8,3 @@ B. install/update dependencies:
 
 C. run development server:
 1. $PS python3.7 manage.py runserver (@ ~/git_environment/bartocgraphql/django)
-
-D. error handling:
--> django.db.utils.OperationalError: no such table: ...
-1. $PS rm db.sqlite3 (@ ~/git_environment/bartocgraphql/django)
-2. $PS rm -rf __pycache__ (@ ~/git_environment/bartocgraphql/django/main)
-3. $PS rm -rf __pycache__ (@ ~/git_environment/bartocgraphql/django/bartocgraphql)
-4. Remove all migrations (not __init__.py) (@ ~/git_environment/bartocgraphql/django/bartocgraphql/migrations)
-5. ...
