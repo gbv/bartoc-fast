@@ -1,0 +1,15 @@
+set up Django database:
+
+->start
+
+A. set up db.sqlite3 (contains a federation but no resources):
+1. PS$ ... manage.py migrate
+
+B. set up admin:
+1. PS$ ... manage.py createsuperuser
+
+C. add resources to db.sqlite3:
+1. log onto admin panel
+2. ... /admin/bartocgraphql/federation/ run "Populate federation..." on "Main federation"
+
+<-stop

@@ -125,4 +125,4 @@ STATIC_URL = '/static/'
 
 GRAPHENE = {
     'SCHEMA': 'main.schema.schema'
-}
+    }

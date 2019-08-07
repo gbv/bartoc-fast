@@ -1,17 +1,22 @@
 from typing import List, Union
 
 from django import forms
+from django.db.utils import OperationalError
 
 from .models import SkosmosInstance, SparqlEndpoint
 
 def make_choices() -> List[Union[SkosmosInstance, SparqlEndpoint]]:
     """ Return list of all resources in federation """
-    
-    resources = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all())
-    choices = []
-    for resource in resources:
-        choices.append((resource.name, resource.name))
-    return choices
+
+    try:
+        resources = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all())
+    except OperationalError:
+        return []
+    else:
+        choices = []
+        for resource in resources:
+            choices.append((resource.name, resource.name))
+        return choices
 
 CHOICES = make_choices()
 
@@ -27,6 +32,8 @@ class BasicForm(forms.Form):
 
 class AdvancedForm(forms.Form):
     """ Advanced form """
+
+
     
     searchword = forms.CharField(label='Search word:',
                                  widget=forms.TextInput(attrs={'placeholder': 'Enter search word',
