@@ -1,4 +1,4 @@
-set up Django database:
+set up django database:
 
 ->start
 

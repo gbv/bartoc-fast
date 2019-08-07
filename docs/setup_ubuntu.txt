@@ -1,0 +1,21 @@
+set up development server on ubuntu 18.04:
+
+->start
+
+A. log onto server:
+1. $PS ssh hinder0000@ub-epic3.ub.unibas.ch
+
+B. install/upgrade python and pip to 3.7:
+1. see https://linuxize.com/post/how-to-install-python-3-7-on-ubuntu-18-04/
+2. see https://stackoverflow.com/questions/54633657/how-to-install-pip-for-python-3-7-on-ubuntu-18
+
+C. install/update dependencies:
+1. $PS pip3.7 install -r requirements.txt --user (@ ~/git_environment/bartocgraphql/docs)
+
+D. set up django database:
+1. see ... /docs/setup_database.txt
+
+E. run development server:
+1. $PS python3.7 manage.py runserver (@ ~/git_environment/bartocgraphql/django)
+
+<-stop
