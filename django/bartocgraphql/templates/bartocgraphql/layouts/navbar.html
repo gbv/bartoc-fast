@@ -2,10 +2,7 @@
   <div class="container">
 	  <ul class="navbar-nav">
 		<li class="nav-item {{ landing_page }}">
-		  <a class="nav-link" href="{% url 'index' %}">Home</a>
-		</li> 
-		<li class="nav-item {{ basic_page }}">
-		  <a class="nav-link" href="{% url 'basic' %}">Basic</a>
+		  <a class="nav-link" href="{% url 'index' %}">Basic</a>
 		</li> 
 		<li class="nav-item {{ advanced_page }}">
 		  <a class="nav-link" href="{% url 'advanced' %}">Advanced</a>
@@ -18,9 +15,6 @@
 		</li>
 		<li class="nav-item {{ about_page }}">
 		  <a class="nav-link" href="{% url 'about' %}">About</a>
-		</li>
-		<li class="nav-item {{ feedback_page }}">
-		  <a class="nav-link" href="{% url 'feedback' %}">Feedback</a>
 		</li>
 		 <li class="nav-item">
 		  <a class="nav-link" href="https://bartoc.org/">BARTOC.org</a>
