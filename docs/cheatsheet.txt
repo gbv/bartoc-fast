@@ -1,3 +1,5 @@
+OFFLINE:
+
 A. use pip:
 1. $PS py -3.7 -m pip install foo
 
@@ -28,5 +30,8 @@ H. rewrite model database with new data:
 2. $PS >>> from bartocgraphql.models import Federation
 3. $PS >>> Federation.objects.get(pk=1).populate()
 
+UBUNTU:
 
-
+A. edit file on server:
+1. go to file directory
+2. $PS nano filename

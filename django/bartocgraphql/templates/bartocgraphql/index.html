@@ -1,62 +1,22 @@
 {% extends 'bartocgraphql/layouts/base.html' %}
 
 {% block content %}
-  <h2>Introduction</h2>
-  <p>BARTOC-GraphQL is an asynchronous federated search. There are three search methods available: basic search, advanced search and expert search.
-  </p>
-  <table class="table table-hover text-center" >
-	  <tbody>
-      <tr>
-		<th></th>
-        <th>Basic</th>
-        <th>Advanced</th>
-        <th>Expert</th>
-      </tr>
-	  <tr>
-        <td style="text-align:left">Search federation</td>
-        <td><span class="badge badge-success">YES</span></td>
-        <td><span class="badge badge-success">YES</span></td>
-		<td><span class="badge badge-success">YES</span></td>
-      </tr>
-      <tr>
-        <td style="text-align:left">Set maximum search time</td>
-        <td><span class="badge badge-danger">NO</span></td>
-        <td><span class="badge badge-success">YES</span></td>
-		<td><span class="badge badge-success">YES</span></td>
-      </tr>
-      <tr>
-        <td style="text-align:left">Display duplicates</td>
-		<td><span class="badge badge-danger">NO</span></td>
-        <td><span class="badge badge-success">YES</span></td>
-		<td><span class="badge badge-success">YES</span></td>
-      </tr>
-	  <tr>
-        <td style="text-align:left">Customize search</td>
-        <td><span class="badge badge-danger">NO</span></td>
-        <td><span class="badge badge-secondary">YES</span></td>
-		<td><span class="badge badge-secondary">YES</span></td>
-      </tr>
-      <tr>
-        <td style="text-align:left">Customize federation</td>
-        <td><span class="badge badge-danger">NO</span></td>
-        <td><span class="badge badge-secondary">YES</span></td>
-		<td><span class="badge badge-secondary">YES</span></td>
-      </tr>
-	  <tr>
-        <td style="text-align:left">GraphQL query language</td>
-        <td><span class="badge badge-danger">NO</span></td>
-		<td><span class="badge badge-danger">NO</span></td>
-        <td><span class="badge badge-success">YES</span></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-{% endblock %}
 
+  <h2>Basic FAST</h2>
+  <p>FAST is a federated asynchronous search tool for BARTOC and other remote resources (<a href="{% url 'about' %}">learn more</a>).</p>
+  <form action="" type="post" class="was-validated">
+	  {% for field in form %}
+	  <div class="form-group">
+	      {{ field.label_tag }} {{ field }}
+		  <div class="valid-feedback">Valid.</div>
+		  <div class="invalid-feedback">Please fill out this field.</div>
+		      {% if field.help_text %}
+			  <small class="form-text text-muted">{{ field.help_text }}</small>
+			  {% endif %}			
+	  </div>
+	  {% endfor %}
+	  <button type="submit" class="btn btn-primary">Search</button>
+  </form>
 
- <ul>
-  <li><a href="{% url 'basic' %}">Basic seach for non-expert users</a></li>
-  <li><a href="{% url 'expert' %}">Expert search (Graph<i>i</i>QL)</a></li>
-  <li><a href="{% url 'data' %}">Data retrieval (JSON)</a></li>
-</ul> 
+{% endblock %}  
 

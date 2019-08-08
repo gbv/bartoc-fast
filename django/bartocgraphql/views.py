@@ -25,28 +25,7 @@ QUERYSTRING = '''{
 }'''
 
 def index(request: HttpRequest) -> HttpResponse:
-    """ Landing page """
-    
-    context = {'landing_page': 'active'}
-    return render(request, 'bartocgraphql/index.html', context)
-
-def about(request: HttpRequest) -> HttpResponse:
-    """ About page """
-
-    federation = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all()) # perhaps a FEDERATION constant in models or utility?
-    federation.sort(key=lambda x: x.name, reverse=False)
-
-    context = {'about_page': 'active', 'federation': federation}
-    return render(request, 'bartocgraphql/about.html', context)
-
-def feedback(request: HttpRequest) -> HttpResponse:
-    """ About page """
-
-    context = {'feedback_page': 'active'}
-    return render(request, 'bartocgraphql/feedback.html', context)
-
-def basic(request: HttpRequest) -> HttpResponse:
-    """ Basic search for non-expert users """
+    """ Landing page including basic search for non-expert users """
 
     if request.method == 'GET':         
         form = BasicForm(request.GET)
@@ -62,12 +41,22 @@ def basic(request: HttpRequest) -> HttpResponse:
 
             results = result.data.get('resultsGlobal') # we just need the values of 'resultsGlobal'
             arguments = form.cleaned_data
-            context = {'basic_page': 'active', 'results': results, 'arguments': arguments} 
+            context = {'landing_page': 'active', 'results': results, 'arguments': arguments} 
             return render(request, 'bartocgraphql/results.html', context)
     else:
         form = BasicForm()
-    context = {'form': form, 'basic_page': 'active'}
-    return render(request, 'bartocgraphql/basic.html', context)
+    
+    context = {'form': form, 'landing_page': 'active'}
+    return render(request, 'bartocgraphql/index.html', context)
+
+def about(request: HttpRequest) -> HttpResponse:
+    """ About page """
+
+    federation = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all()) # perhaps a FEDERATION constant in models or utility?
+    federation.sort(key=lambda x: x.name, reverse=False)
+
+    context = {'about_page': 'active', 'federation': federation}
+    return render(request, 'bartocgraphql/about.html', context)
 
 def advanced(request: HttpRequest) -> HttpResponse:
     """ Advanced search """
@@ -90,6 +79,7 @@ def advanced(request: HttpRequest) -> HttpResponse:
             return render(request, 'bartocgraphql/results.html', context)
     else:
         form = AdvancedForm()
+
     context = {'form': form, 'advanced_page': 'active'}
     return render(request, 'bartocgraphql/advanced.html', context)
 
