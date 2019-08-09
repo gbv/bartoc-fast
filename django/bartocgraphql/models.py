@@ -95,7 +95,15 @@ class SkosmosInstance(Resource):
         if "wildcard" in self.context:
             return parse.quote(searchword.replace("*", ""))
             
-        return parse.quote(searchword)   
+        return parse.quote(searchword)
+
+    def construct_request(self, searchword: str, query: str) -> str:
+        """ Construct REST API request """
+
+        searchword = self.prepare(searchword)
+
+        return self.url + query.querystring + searchword
+        
 
     async def search(self,
                      session: ClientSession,
@@ -104,16 +112,15 @@ class SkosmosInstance(Resource):
         """ Coroutine: send query to Skosmos instance """
 
         start = time.time() # dev
+        
         query = self.select(category)
-
-        searchword = self.prepare(searchword)
         
         if query.timeout == 1:
             return Result(self.name, None, category)
 
-        restapi = self.url + query.querystring + searchword
+        request = self.construct_request(searchword, query)
         
-        async with session.get(restapi) as response:
+        async with session.get(request) as response:
             
             data = await response.json()
 
@@ -146,6 +153,19 @@ class SparqlEndpoint(Resource):
             
         return searchword
 
+    def construct_request(self, searchword: str, query: str) -> str:
+        """ Construct request with SPARQLWrapper """
+
+        searchword = self.prepare(searchword)
+        querystring = query.update(searchword)
+
+        wrapper = SPARQLWrapper(self.url)
+        wrapper.setQuery(querystring)
+        wrapper.setReturnFormat(JSON)
+        request = wrapper._createRequest()
+
+        return request.get_full_url()
+
     async def search(self,
                      session: ClientSession,
                      searchword: str,
@@ -153,23 +173,15 @@ class SparqlEndpoint(Resource):
         """ Coroutine: send query to SPARQL endpoint """
 
         start = time.time() # dev
+        
         query = self.select(category)
-
-        searchword = self.prepare(searchword)
 
         if query.timeout == 1:
             return Result(self.name, None, category)
 
-        querystring = query.update(searchword)
+        request = self.construct_request(searchword, query)
 
-        # use SPARQLWrapper to parse querystring:
-        wrapper = SPARQLWrapper(self.url)
-        wrapper.setQuery(querystring)
-        wrapper.setReturnFormat(JSON)
-        request = wrapper._createRequest()
-        parsed_query = request.get_full_url()
-
-        async with session.get(parsed_query) as response:
+        async with session.get(request) as response:
 
             data = await response.json()
 

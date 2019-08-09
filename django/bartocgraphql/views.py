@@ -10,8 +10,8 @@ from django.shortcuts import render
 
 from .forms import BasicForm, AdvancedForm  
 from .models import SkosmosInstance, SparqlEndpoint
-from .schema import Query                   
-from .utility import DEF_MAXSEARCHTIME, DEF_DUPLICATES, DEF_DISABLED
+from .schema import Query, Helper                   
+from .utility import DEF_MAXSEARCHTIME, DEF_DUPLICATES, DEF_DISABLED, Entry
 
 QUERYSTRING = '''{
     resultsGlobal(SEARCHWORD, MAXSEARCHTIME, DUPLICATES, DISABLED) {
@@ -46,7 +46,9 @@ def index(request: HttpRequest) -> HttpResponse:
                 print("views.index: AttributeError: invalid search string!")
         
             arguments = form.cleaned_data
-            context = {'landing_page': 'active', 'results': results, 'arguments': arguments} 
+            requests = gather_requests(form)
+            requests.sort(key=lambda x: x.name, reverse=False)
+            context = {'landing_page': 'active', 'results': results, 'arguments': arguments, 'requests': requests} 
             return render(request, 'bartocgraphql/results.html', context)
     else:
         form = BasicForm()
@@ -85,7 +87,9 @@ def advanced(request: HttpRequest) -> HttpResponse:
                 print("views.advanced: AttributeError: invalid search string!")
 
             arguments = form.cleaned_data
-            context = {'advanced_page': 'active', 'results': results, 'arguments': arguments} 
+            requests = gather_requests(form)
+            requests.sort(key=lambda x: x.name, reverse=False)
+            context = {'advanced_page': 'active', 'results': results, 'arguments': arguments, 'requests': requests}
             return render(request, 'bartocgraphql/results.html', context)
     else:
         form = AdvancedForm()
@@ -157,7 +161,25 @@ def parse(form: Union[BasicForm, AdvancedForm]) -> str:
     # category = form.cleaned_data['category']
 
     return query_string
-    
+
+def gather_requests(form: Union[BasicForm, AdvancedForm]) -> List[Entry]:
+    """ Gather all requests sent to resources """
+
+    resources = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all())
+    try:
+        disabled = form.cleaned_data['disabled'][:]
+        resources = Helper.remove_disabled(resources, disabled)
+    except KeyError:
+        pass       
+    searchword = form.cleaned_data['searchword']
+    requests = []
+    for resource in resources:
+        query = resource.select(0) # category
+        request = resource.construct_request(searchword, query)
+        requests.append(Entry(resource.name, request))
+    return requests
 
 
 
+            
+      

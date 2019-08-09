@@ -95,7 +95,7 @@ class Query(graphene.ObjectType):
         print(f'***INITIALIZE took {end_init - start}')     # dev
 
         # fetch data from resources as results:
-        results = asyncio.run(fetch(resources, searchword, category, maxsearchtime), debug=True)
+        results = asyncio.run(Helper.fetch(resources, searchword, category, maxsearchtime), debug=True)
         end_fetch = time.time()                             # dev
         print(f'***FETCH took {end_fetch - end_init}')      # dev
 
@@ -108,20 +108,37 @@ class Query(graphene.ObjectType):
         print(f'<--STOP')                                   # dev
         return globalresults
 
+class Helper:
+    """ Helper tools """
 
-async def fetch(resources: List[Union[SkosmosInstance, SparqlEndpoint]],
-                searchword: str,
-                category: int = 0,
-                maxsearchtime: int = DEF_MAXSEARCHTIME) -> List[Result]:
-    """ Coroutine: fetch data from resources as results """
+    @classmethod
+    def remove_disabled(self,
+                        resources: List[Union[SkosmosInstance, SparqlEndpoint]],
+                        disabled: List[Union[SkosmosInstance, SparqlEndpoint]]) -> List[Union[SkosmosInstance, SparqlEndpoint]]:
+        """ Remove disaled resources """
+        
+        while len(disabled) > 0:
+            for resource in resources:
+                if resource.name in disabled:
+                    resources.remove(resource)
+                    disabled.remove(resource.name)
+        return resources
 
-    timeout = ClientTimeout(total=maxsearchtime)
-    async with ClientSession(timeout=timeout) as session:
+    @classmethod
+    async def fetch(self,
+                    resources: List[Union[SkosmosInstance, SparqlEndpoint]],
+                    searchword: str,
+                    category: int = 0,
+                    maxsearchtime: int = DEF_MAXSEARCHTIME) -> List[Result]:
+        """ Coroutine: fetch data from resources as results """
 
-        results = await asyncio.gather(*[resource.main(session, searchword, category) for resource in resources])
-        await session.close()
+        timeout = ClientTimeout(total=maxsearchtime)
+        async with ClientSession(timeout=timeout) as session:
 
-        return results
+            results = await asyncio.gather(*[resource.main(session, searchword, category) for resource in resources])
+            await session.close()
+
+            return results
 
 class Normalize:
     """ Normalize results """
