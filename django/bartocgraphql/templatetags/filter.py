@@ -18,5 +18,8 @@ def get_type(resource: Union[SkosmosInstance, SparqlEndpoint]) -> str:
 @register.filter
 def get_len(thing: object) -> int:
     """ Return len(thing) """
-    
-    return len(thing)
+
+    try:
+        return len(thing)
+    except TypeError:
+        return "ERROR: invalid search string! 0"

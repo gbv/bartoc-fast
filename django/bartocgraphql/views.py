@@ -38,8 +38,13 @@ def index(request: HttpRequest) -> HttpResponse:
 
             schema = graphene.Schema(query=Query)
             result = schema.execute(query_string)
-
-            results = result.data.get('resultsGlobal') # we just need the values of 'resultsGlobal'
+           
+            try:
+                results = result.data.get('resultsGlobal') # we just need the values of 'resultsGlobal'
+            except AttributeError:  # in case there are no results:
+                results = None
+                print("views.index: AttributeError: invalid search string!")
+        
             arguments = form.cleaned_data
             context = {'landing_page': 'active', 'results': results, 'arguments': arguments} 
             return render(request, 'bartocgraphql/results.html', context)
@@ -73,7 +78,12 @@ def advanced(request: HttpRequest) -> HttpResponse:
             schema = graphene.Schema(query=Query)
             result = schema.execute(query_string)
 
-            results = result.data.get('resultsGlobal') # we just need the values of 'resultsGlobal'
+            try:
+                results = result.data.get('resultsGlobal') 
+            except AttributeError:  
+                results = None
+                print("views.advanced: AttributeError: invalid search string!")
+
             arguments = form.cleaned_data
             context = {'advanced_page': 'active', 'results': results, 'arguments': arguments} 
             return render(request, 'bartocgraphql/results.html', context)
@@ -111,7 +121,7 @@ def parse(form: Union[BasicForm, AdvancedForm]) -> str:
     query_string = QUERYSTRING
 
     # searchword:
-    searchword = form.cleaned_data['searchword'] 
+    searchword = form.cleaned_data['searchword']
     query_string = query_string.replace('SEARCHWORD', f'searchword: "{searchword}"')                          
 
     # maxsearchtime:

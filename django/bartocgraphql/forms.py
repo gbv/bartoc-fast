@@ -27,7 +27,7 @@ class BasicForm(forms.Form):
                                  widget=forms.TextInput(attrs={'placeholder': 'Enter search word',
                                                                'class': 'form-control'}),
                                  max_length=100,
-                                 help_text='Boolean operators are not implemented',
+                                 help_text='Truncation (color*) and wildcards (col*r) are supported, Boolean operators are not supported',
                                  required=True)
 
 class AdvancedForm(forms.Form):
@@ -39,7 +39,7 @@ class AdvancedForm(forms.Form):
                                  widget=forms.TextInput(attrs={'placeholder': 'Enter search word',
                                                                'class': 'form-control'}),
                                  max_length=100,
-                                 help_text='Boolean operators are not implemented',
+                                 help_text='Truncation (color*) and wildcards (col*r) are supported, Boolean operators are not supported',
                                  required=True)
     
     maxsearchtime = forms.IntegerField(label='Maximum search time:',

@@ -2,6 +2,7 @@
 
 import time # dev
 import asyncio
+import re
 
 from django.db import models # https://docs.djangoproject.com/en/2.2/ref/models/fields/#django.db.models.Field
 from aiohttp import ClientSession, ClientTimeout
@@ -57,7 +58,7 @@ class Resource(models.Model):
     federation = models.ForeignKey("Federation", on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     url = models.URLField()
-    timeout = models.IntegerField()
+    context = models.CharField(max_length=200) #special, wildcard
 
     class Meta:
         abstract = True
@@ -87,9 +88,13 @@ class SkosmosInstance(Resource):
         
         return SkosmosQuery.objects.get(skosmosinstance=self, category=category)
 
-    def __clean(self, searchword: str) -> str: # avoid naming conflict with Django admin
+    def prepare(self, searchword: str) -> str:
         """ Prepare searchword for search """
-
+        
+        # remove wildcard as in color* and col*r, applies to Legilux:
+        if "wildcard" in self.context:
+            return parse.quote(searchword.replace("*", ""))
+            
         return parse.quote(searchword)   
 
     async def search(self,
@@ -101,12 +106,13 @@ class SkosmosInstance(Resource):
         start = time.time() # dev
         query = self.select(category)
 
-        searchword = self.__clean(searchword)
+        searchword = self.prepare(searchword)
         
         if query.timeout == 1:
             return Result(self.name, None, category)
 
         restapi = self.url + query.querystring + searchword
+        
         async with session.get(restapi) as response:
             
             data = await response.json()
@@ -124,6 +130,22 @@ class SparqlEndpoint(Resource):
         
         return SparqlQuery.objects.get(sparqlendpoint=self, category=category)
 
+    def prepare(self, searchword: str) -> str: 
+        """ Prepare searchword for search """
+
+        # remove excess whitespace:
+        " ".join(searchword.split())
+
+        # open compounds ("gas station"):
+        searchword = searchword.replace(" ", " AND ")
+        
+        # remove special characters (umlaute, etc), applies to virtuoso endpoints (LuSTRE):
+        if "special" in self.context:
+            searchword = re.sub('[^A-Za-z0-9\s]+', '', searchword)
+            " ".join(searchword.split())
+            
+        return searchword
+
     async def search(self,
                      session: ClientSession,
                      searchword: str,
@@ -132,6 +154,8 @@ class SparqlEndpoint(Resource):
 
         start = time.time() # dev
         query = self.select(category)
+
+        searchword = self.prepare(searchword)
 
         if query.timeout == 1:
             return Result(self.name, None, category)
@@ -173,18 +197,18 @@ class Federation(models.Model):
         skosmosinstances = load_workbook(LOCAL_APP_PATH + "fixtures/skosmosinstances.xlsx") # required for unittest; simply fixtures/skosmosinstances.xlsx in production
 
         for ws in skosmosinstances:
-            for row in ws.iter_rows(min_row=2, min_col=1, max_col=3, values_only=True):   
+            for row in ws.iter_rows(min_row=2, min_col=1, max_col=4, values_only=True):   
                 instance = SkosmosInstance(federation=self,
                                                   name=row[0],
                                                   url=row[1],
-                                                  timeout=row[2])
+                                                  context=row[2])
                 instance.save()
 
                 query = SkosmosQuery(skosmosinstance=instance, # constructs query of cat 0
                                      querystring="/rest/v1/search?query=",
                                      description="NA",
                                      category=0,
-                                     timeout=row[2])
+                                     timeout=row[3])
                 query.save()
 
     def populate_sparqlendpoints(self) -> None:
@@ -195,13 +219,14 @@ class Federation(models.Model):
         sparqlendpoints = load_workbook(LOCAL_APP_PATH + "fixtures/sparqlendpoints.xlsx") # required for unittest; fixtures/sparqlendpoints.xlsx in production
 
         for ws in sparqlendpoints:
+
             endpoint = SparqlEndpoint(federation=self,
                                       name=ws['A3'].value,
                                       url=ws['B3'].value,
-                                      timeout=0)
+                                      context=ws['C3'].value)
             endpoint.save()
             
-            for row in ws.iter_rows(min_row=3, min_col=3, max_col=6, values_only=True):
+            for row in ws.iter_rows(min_row=3, min_col=4, max_col=7, values_only=True):
                 query = SparqlQuery(sparqlendpoint=endpoint,
                                     querystring=row[0],
                                     description=row[1],
