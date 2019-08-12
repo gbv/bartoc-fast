@@ -247,14 +247,72 @@ class Normalize:
                 globalresult.source = result.name               # we set the source of globalresult to the name of the result (i.e., name of the resource where the result was queried)
                 normalized.append(globalresult)
 
+            # dev USE THIS for simple normalize w/out merge:
+            #howmany = len(normalized) # dev
+            #normalized = self.purge(normalized)
+            #print(f'{result.name} has {howmany - len(normalized)} duplicates and {len(normalized)} unique results') # dev
+            #return normalized # self.purge(normalized) w/o dev
+
+            # dev USE THIS for normalize with merge:
             howmany = len(normalized) # dev
-            normalized = self.purge(normalized)
-            print(f'{result.name} has {howmany - len(normalized)} duplicates and {len(normalized)} unique results') # dev
-            return normalized # self.purge(normalized) w/o dev
+            merged = self.merge(normalized)
+            print(f'{result.name} has {howmany - len(merged)} duplicates and {len(merged)} unique results') # dev
+            return merged
         
     @classmethod
     def purge(self, globalresults: List[GlobalResult]) -> List[GlobalResult]:
         """ Delete duplicates """
 
         globalresults = set(globalresults)
-        return list(globalresults)    
+        return list(globalresults)
+
+    @classmethod
+    def partition(self, globalresults: List[GlobalResult]) -> Dict[str, List[GlobalResult]]:
+        """ Make partition: {x in List[GlobalResult] | x ~ uri} """
+
+        partition = dict()
+
+        for globalresult in globalresults:
+            if globalresult.uri in partition:
+                value = partition[globalresult.uri]
+                value.append(globalresult)
+                partition[globalresult.uri] = value
+            else:
+                partition.update({globalresult.uri : [globalresult]})
+                
+        return partition
+
+    @classmethod
+    def merge(self, globalresults: List[GlobalResult]) -> List[GlobalResult]:
+        """ Merge duplicates: for a given block of a partition, merge each field for each element in the block """
+
+        partition = self.partition(globalresults)
+
+        globalresults = []
+
+        for key in partition:
+            if len(partition[key]) == 1:
+                globalresults.append(partition[key][0])
+            else:
+                globalresult = GlobalResult()
+                fields = GlobalResult.fields()
+                for field in fields:
+                    merged = []
+                    for element in partition[key]:
+                        value = getattr(element, field)
+                        if value is not None:
+                            merged.append(value)
+                    merged = set(merged)
+                    if len(merged) > 0:
+                        merged = "; ".join(merged)
+                    else:
+                        merged = None
+                    setattr(globalresult, field, merged)
+                globalresults.append(globalresult)
+
+        return globalresults
+                    
+                
+            
+            
+            
