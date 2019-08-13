@@ -19,7 +19,7 @@ from django.urls import include, path
 from graphene_django.views import GraphQLView
 
 urlpatterns = [
-    path('bartocgraphql/', include('bartocgraphql.urls')),
+    path('bartocfast/', include('bartocfast.urls')),
     path('graphql', GraphQLView.as_view(graphiql=True)),
     path('admin/', admin.site.urls),
 ]

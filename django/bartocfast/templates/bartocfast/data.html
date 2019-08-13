@@ -1,8 +1,8 @@
-{% extends 'bartocgraphql/layouts/base.html' %}
+{% extends 'bartocfast/layouts/base.html' %}
 
 {% block content %}
-  <h2>Advanced FAST</h2>
-  <p>Customize your FAST search.
+  <h2>Data FAST</h2>
+  <p>FAST returns the results as a JSON file.</p> 
 	<form action="" type="post" class="was-validated">
 		<div class="form-row">
 			<div class="col-6">
@@ -22,7 +22,7 @@
 					<small class="form-text text-muted">{{ form.maxsearchtime.help_text }}</small>
 				</div>	
 			</div>
-		</div>	 	
+		</div>	 
 		<div class="form-row">
 			<div class="col-6">
 				<div class="form-group">

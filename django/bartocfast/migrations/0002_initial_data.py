@@ -5,14 +5,14 @@ from django.db import migrations
 def load_federation(apps, schema_editor):
     """ Creates the initial federation """
     
-    Federation = apps.get_model('bartocgraphql', 'Federation')
+    Federation = apps.get_model('bartocfast', 'Federation')
     federation = Federation()
     federation.save() 
     
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('bartocgraphql', '0001_initial'),
+        ('bartocfast', '0001_initial'),
     ]
 
     operations = [

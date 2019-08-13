@@ -5,7 +5,7 @@ from typing import List, Set, Dict, Tuple, Optional, Union
 
 from openpyxl import load_workbook
 
-LOCAL_APP_PATH = "//itsc-pg2.storage.p.unibas.ch/ub-home$/hinder0000/Documents/GitHub/bartocgraphql/django/bartocgraphql/" # local app path
+LOCAL_APP_PATH = "//itsc-pg2.storage.p.unibas.ch/ub-home$/hinder0000/Documents/GitHub/bartocfast/django/bartocfast/" # local app path
 DEF_MAXSEARCHTIME = 5 # default search time in seconds
 DEF_DUPLICATES = False # default value for duplicates argument
 DEF_DISABLED = [] # default value for disabled resources
@@ -53,7 +53,7 @@ class MappingDatabase(Database):
     def setup(self) -> None:
         """ Populate the database with maps """
         
-        wb = load_workbook("//itsc-pg2.storage.p.unibas.ch/ub-home$/hinder0000/Documents/GitHub/bartocgraphql/django/bartocgraphql/fixtures/mappings.xlsx") # required for unittest; fixtures/mappings.xlsx in production
+        wb = load_workbook("//itsc-pg2.storage.p.unibas.ch/ub-home$/hinder0000/Documents/GitHub/bartocfast/django/bartocfast/fixtures/mappings.xlsx") # required for unittest; fixtures/mappings.xlsx in production
         for ws in wb:
             for row in ws.iter_rows(min_row=3, min_col=1, max_col=4, values_only=True):
                 field = row[0]

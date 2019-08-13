@@ -1,7 +1,7 @@
 import graphene
-import bartocgraphql.schema # local
+import bartocfast.schema # local
 
-class Query(bartocgraphql.schema.Query, graphene.ObjectType):
+class Query(bartocfast.schema.Query, graphene.ObjectType):
     """ Combines multiple Query schemas located in different apps """
     pass
 

@@ -49,12 +49,12 @@ def index(request: HttpRequest) -> HttpResponse:
             requests = gather_requests(form)
             requests.sort(key=lambda x: x.name, reverse=False)
             context = {'landing_page': 'active', 'results': results, 'arguments': arguments, 'requests': requests} 
-            return render(request, 'bartocgraphql/results.html', context)
+            return render(request, 'bartocfast/results.html', context)
     else:
         form = BasicForm()
     
     context = {'form': form, 'landing_page': 'active'}
-    return render(request, 'bartocgraphql/index.html', context)
+    return render(request, 'bartocfast/index.html', context)
 
 def about(request: HttpRequest) -> HttpResponse:
     """ About page """
@@ -63,7 +63,7 @@ def about(request: HttpRequest) -> HttpResponse:
     federation.sort(key=lambda x: x.name, reverse=False)
 
     context = {'about_page': 'active', 'federation': federation}
-    return render(request, 'bartocgraphql/about.html', context)
+    return render(request, 'bartocfast/about.html', context)
 
 def advanced(request: HttpRequest) -> HttpResponse:
     """ Advanced search """
@@ -90,12 +90,12 @@ def advanced(request: HttpRequest) -> HttpResponse:
             requests = gather_requests(form)
             requests.sort(key=lambda x: x.name, reverse=False)
             context = {'advanced_page': 'active', 'results': results, 'arguments': arguments, 'requests': requests}
-            return render(request, 'bartocgraphql/results.html', context)
+            return render(request, 'bartocfast/results.html', context)
     else:
         form = AdvancedForm()
 
     context = {'form': form, 'advanced_page': 'active'}
-    return render(request, 'bartocgraphql/advanced.html', context)
+    return render(request, 'bartocfast/advanced.html', context)
 
 def data(request: HttpRequest) -> HttpResponse:
     """ Data retrieval """
@@ -117,7 +117,7 @@ def data(request: HttpRequest) -> HttpResponse:
     else:
         form = AdvancedForm()
     context = {'form': form, 'data_page': 'active'}
-    return render(request, 'bartocgraphql/data.html', context)
+    return render(request, 'bartocfast/data.html', context)
 
 def parse(form: Union[BasicForm, AdvancedForm]) -> str:
     """ Update QUERYSTRING with arguments from form (if any) or default values """

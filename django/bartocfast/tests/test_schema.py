@@ -1,4 +1,4 @@
-""" A test for schema.py: py -3.7 ./manage.py test bartocgraphql.tests.test_schema """
+""" A test for schema.py: py -3.7 ./manage.py test bartocfast.tests.test_schema """
 
 from django.test import SimpleTestCase
 
@@ -16,7 +16,7 @@ class Test_normalize_sparql(SimpleTestCase):
 
     def setUp(self) -> None:
         self.searchword = "turtle"
-        with open(f'//itsc-pg2.storage.p.unibas.ch/ub-home$/hinder0000/Documents/GitHub/bartocgraphql/django/bartocgraphql/tests/files/schema_normalize_sparql_{self.searchword}.json', encoding="utf-8") as file:
+        with open(f'//itsc-pg2.storage.p.unibas.ch/ub-home$/hinder0000/Documents/GitHub/bartocfast/django/bartocfast/tests/files/schema_normalize_sparql_{self.searchword}.json', encoding="utf-8") as file:
             data = json.load(file)
             file.close()
         self.result = Result("Getty", data, 0)

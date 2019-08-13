@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=100)),
                 ('url', models.URLField()),
                 ('context', models.CharField(max_length=200)),
-                ('federation', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='bartocgraphql.Federation')),
+                ('federation', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='bartocfast.Federation')),
             ],
             options={
                 'abstract': False,
@@ -42,7 +42,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=100)),
                 ('url', models.URLField()),
                 ('context', models.CharField(max_length=200)),
-                ('federation', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='bartocgraphql.Federation')),
+                ('federation', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='bartocfast.Federation')),
             ],
             options={
                 'abstract': False,
@@ -56,7 +56,7 @@ class Migration(migrations.Migration):
                 ('description', models.CharField(max_length=100)),
                 ('category', models.IntegerField()),
                 ('timeout', models.IntegerField()),
-                ('sparqlendpoint', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='bartocgraphql.SparqlEndpoint')),
+                ('sparqlendpoint', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='bartocfast.SparqlEndpoint')),
             ],
             options={
                 'abstract': False,
@@ -71,7 +71,7 @@ class Migration(migrations.Migration):
                 ('description', models.CharField(max_length=100)),
                 ('category', models.IntegerField()),
                 ('timeout', models.IntegerField()),
-                ('skosmosinstance', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='bartocgraphql.SkosmosInstance')),
+                ('skosmosinstance', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='bartocfast.SkosmosInstance')),
             ],
             options={
                 'abstract': False,
