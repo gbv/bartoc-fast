@@ -10,6 +10,6 @@ B. set up admin:
 
 C. add resources to db.sqlite3:
 1. log onto admin panel
-2. ... /admin/bartocgraphql/federation/ run "Populate federation..." on "Main federation"
+2. ... /admin/bartocfast/federation/ run "Populate federation..." on "Main federation"
 
 <-stop

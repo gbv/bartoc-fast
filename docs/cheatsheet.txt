@@ -27,7 +27,7 @@ G. run interactive console:
 
 H. rewrite model database with new data:
 1. $PS py -3.7 ./manage.py shell
-2. $PS >>> from bartocgraphql.models import Federation
+2. $PS >>> from bartocfast.models import Federation
 3. $PS >>> Federation.objects.get(pk=1).populate()
 
 UBUNTU:

@@ -10,12 +10,12 @@ B. install/upgrade python and pip to 3.7:
 2. see https://stackoverflow.com/questions/54633657/how-to-install-pip-for-python-3-7-on-ubuntu-18
 
 C. install/update dependencies:
-1. $PS pip3.7 install -r requirements.txt --user (@ ~/git_environment/bartocgraphql/docs)
+1. $PS pip3.7 install -r requirements.txt --user (@ ~/git_environment/bartocfast/docs)
 
 D. set up django database:
 1. see ... /docs/setup_database.txt
 
 E. run development server:
-1. $PS python3.7 manage.py runserver (@ ~/git_environment/bartocgraphql/django)
+1. $PS python3.7 manage.py runserver (@ ~/git_environment/bartocfast/django)
 
 <-stop
