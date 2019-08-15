@@ -77,7 +77,7 @@ class Resource(models.Model):
             return result
         
         except asyncio.TimeoutError:
-            print(f'FETCH {self.name} run out of time!') # dev
+            print(f'FETCH {self.name} ran out of time!') # dev
             return Result(self.name, None, category)
 
 class SkosmosInstance(Resource):
