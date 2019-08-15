@@ -206,8 +206,7 @@ class Federation(models.Model):
 
         SkosmosInstance.objects.all().delete()
 
-        skosmosinstances = load_workbook(LOCAL_APP_PATH + "fixtures/skosmosinstances.xlsx") # required for unittest; simply fixtures/skosmosinstances.xlsx in production
-
+        skosmosinstances = load_workbook(LOCAL_APP_PATH + "/fixtures/skosmosinstances.xlsx")
         for ws in skosmosinstances:
             for row in ws.iter_rows(min_row=2, min_col=1, max_col=4, values_only=True):   
                 instance = SkosmosInstance(federation=self,
@@ -228,8 +227,7 @@ class Federation(models.Model):
 
         SparqlEndpoint.objects.all().delete()
 
-        sparqlendpoints = load_workbook(LOCAL_APP_PATH + "fixtures/sparqlendpoints.xlsx") # required for unittest; fixtures/sparqlendpoints.xlsx in production
-
+        sparqlendpoints = load_workbook(LOCAL_APP_PATH + "/fixtures/sparqlendpoints.xlsx")
         for ws in sparqlendpoints:
 
             endpoint = SparqlEndpoint(federation=self,

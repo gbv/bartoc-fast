@@ -25,7 +25,7 @@ SECRET_KEY = '_q($z+k0m^xk7!)u$ley79)w=h%wx-dpnoyb*h)ljw21e!ywwv'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "bartoc-fast.ub.unibas.ch", "131.152.230.155", "172.18.0.1", "172.17.0.1"]
 
 
 # Application definition

@@ -32,6 +32,9 @@ H. rewrite model database with new data:
 
 UBUNTU:
 
-A. edit file on server:
+A. start django server:
+1. $PS python3.7 manage.py runserver 0.0.0.0:8000 (@ ~/git_environment/bartocfast/django)
+
+B. edit file:
 1. go to file directory
 2. $PS nano filename

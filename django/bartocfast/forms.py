@@ -33,8 +33,6 @@ class BasicForm(forms.Form):
 class AdvancedForm(forms.Form):
     """ Advanced form """
 
-
-    
     searchword = forms.CharField(label='Search word:',
                                  widget=forms.TextInput(attrs={'placeholder': 'Enter search word',
                                                                'class': 'form-control'}),
