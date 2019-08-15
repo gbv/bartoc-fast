@@ -1,0 +1,13 @@
+set up repository:
+
+->start
+
+A. log onto server:
+1. $PS ssh hinder0000@ub-epic3.ub.unibas.ch
+
+B. delete old repository (if any):
+1. $PS rm -rf foo
+
+C. clone repository:
+1. $PS sudo git clone https://github.com/MHindermann/bartocfast.git (@ ~/git_env$)
+<-stop

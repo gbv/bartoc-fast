@@ -3,10 +3,10 @@ set up django database:
 ->start
 
 A. set up db.sqlite3 (contains a federation but no resources):
-1. PS$ ... manage.py migrate
+1. $PS sudo python3.7 manage.py migrate
 
 B. set up admin:
-1. PS$ ... manage.py createsuperuser
+1. $PS sudo python3.7 manage.py createsuperuser
 
 C. add resources to db.sqlite3:
 1. log onto admin panel
