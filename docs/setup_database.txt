@@ -12,4 +12,9 @@ C. add resources to db.sqlite3:
 1. log onto admin panel
 2. ... /admin/bartocfast/federation/ run "Populate federation..." on "Main federation"
 
+D. disable slow resources:
+1. PS$ python3.7 manage.py shell (@ ~/git_environment/bartocfast/django)
+2. PS$ >>> from bartocfast.schema import Helper
+3. PS$ >>> Helper.selfcheck()
+
 <-stop

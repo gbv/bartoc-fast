@@ -9,7 +9,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
 from .forms import BasicForm, AdvancedForm  
-from .models import SkosmosInstance, SparqlEndpoint
+from .models import Federation, SkosmosInstance, SparqlEndpoint
 from .schema import Query, Helper                   
 from .utility import DEF_MAXSEARCHTIME, DEF_DUPLICATES, DEF_DISABLED, Entry
 
@@ -59,10 +59,11 @@ def index(request: HttpRequest) -> HttpResponse:
 def about(request: HttpRequest) -> HttpResponse:
     """ About page """
 
-    federation = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all()) # perhaps a FEDERATION constant in models or utility?
-    federation.sort(key=lambda x: x.name, reverse=False)
+    federation = federation = Federation.objects.all()[0] # perhaps a FEDERATION constant in models or utility?
+    resources = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all()) 
+    resources.sort(key=lambda x: x.name, reverse=False)
 
-    context = {'about_page': 'active', 'federation': federation}
+    context = {'about_page': 'active', 'federation': federation, 'resources': resources}
     return render(request, 'bartocfast/about.html', context)
 
 def advanced(request: HttpRequest) -> HttpResponse:

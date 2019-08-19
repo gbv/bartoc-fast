@@ -7,7 +7,7 @@ from typing import List, Set, Dict, Tuple, Optional, Union
 import graphene
 from aiohttp import ClientSession, ClientTimeout
 
-from .models import SkosmosInstance, SparqlEndpoint
+from .models import Federation, SkosmosInstance, SparqlEndpoint
 
 from .utility import Result, MappingDatabase, DEF_MAXSEARCHTIME, DEF_DISABLED # local
 
@@ -81,15 +81,13 @@ class Query(graphene.ObjectType):
         # initialize:
         # should already be done... if not, update federation manually
 
+        # 
+
         # access resources in federation:
         resources = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all())
 
         # remove disabled resources
-        while len(disabled) > 0:
-            for resource in resources:
-                if resource.name in disabled:
-                    resources.remove(resource)
-                    disabled.remove(resource.name)
+        resources = Helper.remove_disabled(resources, disabled)
                             
         end_init = time.time()                              # dev
         print(f'***INITIALIZE took {end_init - start}')     # dev
@@ -140,6 +138,53 @@ class Helper:
 
             return results
 
+    @classmethod
+    def selfcheck(self) -> None:
+        """ Disable slow resources """
+
+        resources = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all())
+
+        # "logic" searchword
+        logic = ["AgroVoc", "Bartoc", "Finto", "Getty AAT", "Getty ULAN", "Loterre", "LuSTRE", "OZCAR-Theia", "UNESCO", "data.ub.uio.no"]
+        logic_resources = []
+        for resource in resources:
+            if resource.name in logic:
+                logic_resources.append(resource)
+        logic_results = asyncio.run(self.fetch(logic_resources, "logic", 0, 5), debug=True)
+
+        # "law" searchword
+        law = ["Getty TGN", "Legilux"]
+        law_resources = []
+        for resource in resources:
+            if resource.name in law:
+                law_resources.append(resource)
+        law_results = asyncio.run(self.fetch(law_resources, "law", 0, 5), debug=True)
+
+        # "trumpet" searchword
+        trumpet = ["MIMO"]
+        trumpet_resources = []
+        for resource in resources:
+            if resource.name in trumpet:
+                trumpet_resources.append(resource)
+        trumpet_results = asyncio.run(self.fetch(trumpet_resources, "trumpet", 0, 5), debug=True)  
+        
+        results = logic_results + law_results + trumpet_results
+
+        slow_resources = []
+        for result in results:
+            if result.data == None:
+                slow_resources.append(result.name)
+
+        for resource in resources:
+            if resource.name in slow_resources:
+                resource.disabled = True
+                resource.save()
+                print(f'{resource.name} was disabled!')
+
+        # update Federation.timestamp
+        federation = Federation.objects.all()[0]
+        federation.save()
+   
 class Normalize:
     """ Normalize results """
 

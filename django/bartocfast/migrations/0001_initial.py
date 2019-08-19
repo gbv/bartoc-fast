@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             name='Federation',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(auto_now=True)),
+                ('timestamp', models.DateTimeField(auto_now=True)),
             ],
             options={
                 'verbose_name_plural': 'federation',
@@ -29,6 +29,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=100)),
                 ('url', models.URLField()),
                 ('context', models.CharField(max_length=200)),
+                ('disabled', models.BooleanField(default=False)),
                 ('federation', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='bartocfast.Federation')),
             ],
             options={
@@ -42,6 +43,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=100)),
                 ('url', models.URLField()),
                 ('context', models.CharField(max_length=200)),
+                ('disabled', models.BooleanField(default=False)),
                 ('federation', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='bartocfast.Federation')),
             ],
             options={

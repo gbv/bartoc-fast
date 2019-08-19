@@ -58,6 +58,7 @@ class Resource(models.Model):
     federation = models.ForeignKey("Federation", on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     url = models.URLField()
+    disabled = models.BooleanField(default=False)
     context = models.CharField(max_length=200) #special, wildcard
 
     class Meta:
@@ -112,12 +113,11 @@ class SkosmosInstance(Resource):
         """ Coroutine: send query to Skosmos instance """
 
         start = time.time() # dev
+
+        if self.disabled == True:
+            return Result(self.name, None, category)
         
         query = self.select(category)
-        
-        if query.timeout == 1:
-            return Result(self.name, None, category)
-
         request = self.construct_request(searchword, query)
         
         async with session.get(request) as response:
@@ -173,12 +173,11 @@ class SparqlEndpoint(Resource):
         """ Coroutine: send query to SPARQL endpoint """
 
         start = time.time() # dev
+
+        if self.disabled == True:
+            return Result(self.name, None, category)
         
         query = self.select(category)
-
-        if query.timeout == 1:
-            return Result(self.name, None, category)
-
         request = self.construct_request(searchword, query)
 
         async with session.get(request) as response:
@@ -193,13 +192,17 @@ class SparqlEndpoint(Resource):
 # federation: 
 class Federation(models.Model):
     """ The federation of resources (there is only one) """
-    created = models.DateTimeField(auto_now=True)
+    
+    timestamp = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name_plural = 'federation'
 
     def __str__(self) -> str:
         return 'Main federation'
+
+    def get_timestamp(self):
+        return self.timestamp.strftime("%Y-%m-%d %H:%M:%S")
 
     def populate_skosmosinstances(self) -> None: 
         """ Populate federation with Skosmos instances and their queries """
@@ -210,9 +213,9 @@ class Federation(models.Model):
         for ws in skosmosinstances:
             for row in ws.iter_rows(min_row=2, min_col=1, max_col=4, values_only=True):   
                 instance = SkosmosInstance(federation=self,
-                                                  name=row[0],
-                                                  url=row[1],
-                                                  context=row[2])
+                                           name=row[0],
+                                           url=row[1],
+                                           context=row[2])
                 instance.save()
 
                 query = SkosmosQuery(skosmosinstance=instance, # constructs query of cat 0
@@ -249,5 +252,3 @@ class Federation(models.Model):
 
         self.populate_skosmosinstances()
         self.populate_sparqlendpoints()
-
-            
