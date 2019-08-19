@@ -15,7 +15,8 @@ def make_choices() -> List[Union[SkosmosInstance, SparqlEndpoint]]:
     else:
         choices = []
         for resource in resources:
-            choices.append((resource.name, resource.name))
+            if resource.disabled == False:
+                choices.append((resource.name, resource.name))
         return choices
 
 CHOICES = make_choices()
