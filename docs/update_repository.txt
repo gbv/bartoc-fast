@@ -1,0 +1,11 @@
+update repository:
+
+->start
+
+A. log onto server:
+1. $PS ssh hinder0000@ub-epic3.ub.unibas.ch 
+
+B. update repository:
+1. $PS sudo git pull origin master (@ ~/git_env/bartocfast$)
+
+<-stop
