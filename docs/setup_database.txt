@@ -1,4 +1,4 @@
-set up django database:
+lsset up django database:
 
 ->start
 
@@ -10,7 +10,7 @@ B. set up admin:
 
 C. add resources to db.sqlite3:
 1. PS$ python3.7 manage.py shell (@ ~/git_environment/bartocfast/django)
-2. PS$ >>> from bartocfast.schema import Maintenance
+2. PS$ >>> from bartocfast.maintenance import Maintenance
 3. PS$ >>> Maintenance.populate()
 OR
 1. log onto admin
@@ -18,7 +18,7 @@ OR
 
 D. disable slow resources:
 1. PS$ python3.7 manage.py shell (@ ~/git_environment/bartocfast/django)
-2. PS$ >>> from bartocfast.schema import Maintenance
+2. PS$ >>> from bartocfast.maintenance import Maintenance
 3. PS$ >>> Maintenance.selfcheck()
 OR
 1. log onto admin
