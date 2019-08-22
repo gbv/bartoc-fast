@@ -33,8 +33,8 @@
 		</div>
 	</div>
 </div>
-<div class="table-responsive">
-	<table class="table table-hover table-sm text-left" >
+<div class="table-responsive" style="margin-left:-15px">
+	<table id="results" class="table table-hover table-sm text-left">
 		<thead class="thead-light">
 			<tr>
 				<th>No</th>
@@ -61,6 +61,22 @@
 		</tbody>    
 	</table>
 </div>
+<script src="//code.jquery.com/jquery-1.12.4.js"></script>
+<script src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="//cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
+<script>
+	$(document).ready(function() {
+		$('#results').DataTable( {
+			"lengthMenu": [[25, 50, 100, -1], ["Show 25 results", "Show 50 results", "Show 100 results", "Show all results"]],
+			"scrollX": true,
+			"language": {
+            "lengthMenu": "_MENU_",
+			"search": "_INPUT_",
+			searchPlaceholder: "Search results"
+			}
+		} );
+    } );
+</script>
 
 {% endblock %}
 
