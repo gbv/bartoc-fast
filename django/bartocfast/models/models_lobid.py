@@ -1,4 +1,4 @@
-""" models_skosmos.py """
+""" models_lobid.py based on http://lobid.org/gnd/api """
 
 import time # dev
 import asyncio
@@ -10,47 +10,47 @@ from urllib import parse
 from .models_base import Resource, Query
 from ..utility import Result
 
-class SkosmosQuery(Query):
-    """ A SPARQL query """
+class LobidQuery(Query):
+    """ A lobid-gnd query """
 
     class Meta:
-        verbose_name_plural = 'Skosmos queries'
+        verbose_name_plural = 'lobid-gnd queries'
     
-    skosmosinstance = models.ForeignKey("SkosmosInstance", on_delete=models.CASCADE)
+    lobidresource = models.ForeignKey("LobidResource", on_delete=models.CASCADE)
 
     def __str__(self) -> str:
-        return f'{self.skosmosinstance.name} category {self.category}'
+        return f'{self.lobidresource.name} category {self.category}'
 
-class SkosmosInstance(Resource):
-    """ A Skosmos instance """
+class LobidResource(Resource):
+    """ A lobid-gnd resource """
 
-    def select(self, category: int) -> SkosmosQuery:
-        """ Select Skosmos query by category """ 
+    def select(self, category: int) -> LobidQuery:
+        """ Select lobid-gnd query by category """ 
         
-        return SkosmosQuery.objects.get(skosmosinstance=self, category=category)
+        return LobidQuery.objects.get(lobidresource=self, category=category)
 
-    def prepare(self, searchword: str) -> str:
+    def prepare(self, searchword: str) -> str: ### check if needed
         """ Prepare searchword for search """
         
-        # remove wildcard as in color* and col*r, applies to Legilux:
+        # remove wildcard as in color* and col*r:
         if "wildcard" in self.context:
             return parse.quote(searchword.replace("*", ""))
             
         return parse.quote(searchword)
 
     def construct_request(self, searchword: str, query: str) -> str:
-        """ Construct Skosmos REST API request """
+        """ Construct lobid-gnd request """
 
         searchword = self.prepare(searchword)
 
-        return self.url + query.querystring + searchword
+        return self.url + query.querystring.replace("!!!SEARCHWORD!!!", searchword)
         
 
     async def search(self,
                      session: ClientSession,
                      searchword: str,
                      category: int = 0) -> Result:
-        """ Coroutine: send query to Skosmos instance """
+        """ Coroutine: send query to Lobid resource """
 
         start = time.time() # dev
 

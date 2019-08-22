@@ -9,7 +9,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
 from .forms import BasicForm, AdvancedForm  
-from .models import Federation, SkosmosInstance, SparqlEndpoint
+from .models import Federation, SkosmosInstance, SparqlEndpoint, LobidResource
 from .schema import Query, Helper                   
 from .utility import DEF_MAXSEARCHTIME, DEF_DUPLICATES, DEF_DISABLED, Entry
 
@@ -47,7 +47,7 @@ def index(request: HttpRequest) -> HttpResponse:
         
             arguments = form.cleaned_data
             requests = gather_requests(form)
-            requests.sort(key=lambda x: x.name, reverse=False)
+            requests.sort(key=lambda x: x.name.upper(), reverse=False)
             context = {'landing_page': 'active', 'results': results, 'arguments': arguments, 'requests': requests} 
             return render(request, 'bartocfast/results.html', context)
     else:
@@ -60,8 +60,8 @@ def about(request: HttpRequest) -> HttpResponse:
     """ About page """
 
     federation = federation = Federation.objects.all()[0] # perhaps a FEDERATION constant in models or utility?
-    resources = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all()) 
-    resources.sort(key=lambda x: x.name, reverse=False)
+    resources = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all()) + list(LobidResource.objects.all())
+    resources.sort(key=lambda x: x.name.upper(), reverse=False)
 
     context = {'about_page': 'active', 'federation': federation, 'resources': resources}
     return render(request, 'bartocfast/about.html', context)
@@ -89,7 +89,7 @@ def advanced(request: HttpRequest) -> HttpResponse:
 
             arguments = form.cleaned_data
             requests = gather_requests(form)
-            requests.sort(key=lambda x: x.name, reverse=False)
+            requests.sort(key=lambda x: x.name.upper(), reverse=False)
             context = {'advanced_page': 'active', 'results': results, 'arguments': arguments, 'requests': requests}
             return render(request, 'bartocfast/results.html', context)
     else:
@@ -166,7 +166,7 @@ def parse(form: Union[BasicForm, AdvancedForm]) -> str:
 def gather_requests(form: Union[BasicForm, AdvancedForm]) -> List[Entry]:
     """ Gather all requests sent to resources """
 
-    resources = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all())
+    resources = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all()) + list(LobidResource.objects.all())
     try:
         disabled = form.cleaned_data['disabled'][:]
         resources = Helper.remove_disabled(resources, disabled)

@@ -1,0 +1,16 @@
+add resource & query to federation:
+
+->start
+
+A. add resource & query to models (@ models.py)
+B. add Maintenance method to popuate with resource & query (@ maintenance.py)
+C. add Maintenance method to selfcheck with resource & query (@ maintenance.py)
+D. write migration for resource & query
+E. register resource & query (@ admin.py)
+F. add Normalize method to parse resource & query results (@ schema.py)
+G. add resource to about function (@ views.py)
+H. add resource to gather_requests function (@ views.py)
+I. add resource to get_type function (@ filter.py)
+J. add resource to  make_choices (@ forms.py)
+
+<-stop

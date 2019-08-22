@@ -8,7 +8,7 @@ from django.db import models # https://docs.djangoproject.com/en/2.2/ref/models/
 from aiohttp import ClientSession, ClientTimeout
 from SPARQLWrapper import (SPARQLWrapper, JSON)
 
-from .models_main import Resource, Query
+from .models_base import Resource, Query
 from ..utility import Result
 
 class SparqlQuery(Query):

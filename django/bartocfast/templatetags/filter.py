@@ -2,7 +2,7 @@ from typing import List, Set, Dict, Tuple, Optional, Union
 
 from django import template
 
-from ..models import SkosmosInstance, SparqlEndpoint
+from ..models import SkosmosInstance, SparqlEndpoint, LobidResource
 
 register = template.Library()
 
@@ -14,6 +14,8 @@ def get_type(resource: Union[SkosmosInstance, SparqlEndpoint]) -> str:
         return "Skosmos"
     if isinstance(resource, SparqlEndpoint):
         return "SPARQL"
+    if isinstance(resource, LobidResource):
+        return "lobid-gnd API"
 
 @register.filter
 def get_len(thing: object) -> int:

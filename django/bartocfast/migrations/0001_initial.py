@@ -51,6 +51,20 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='LobidResource',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('name', models.CharField(max_length=100)),
+                ('url', models.URLField()),
+                ('disabled', models.BooleanField(default=False)),
+                ('context', models.CharField(max_length=200)),
+                ('federation', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='bartocfast.Federation')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
             name='SparqlQuery',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -78,6 +92,20 @@ class Migration(migrations.Migration):
             options={
                 'abstract': False,
                 'verbose_name_plural': 'Skosmos queries',
+            },
+        ),
+        migrations.CreateModel(
+            name='LobidQuery',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('querystring', models.CharField(max_length=100)),
+                ('description', models.CharField(max_length=100)),
+                ('category', models.IntegerField()),
+                ('timeout', models.IntegerField()),
+                ('lobidresource', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='bartocfast.LobidResource')),
+            ],
+            options={
+                'verbose_name_plural': 'lobid-gnd queries',
             },
         ),
     ]

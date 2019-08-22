@@ -2,17 +2,16 @@
 
 import time # dev
 import asyncio 
-from typing import List, Set, Dict, Tuple, Optional, Union
+from typing import List, Set, Dict, Union
 
 import graphene
 from aiohttp import ClientSession, ClientTimeout
 
-from .models import Federation, SkosmosInstance, SparqlEndpoint
-
+from .models import Federation, SkosmosInstance, SparqlEndpoint, LobidResource
 from .utility import Result, MappingDatabase, DEF_MAXSEARCHTIME, DEF_DISABLED # local
 
 class GlobalResult(graphene.ObjectType):
-    """ Result of a Global (with capital G) query """
+    """ Result of a global query """
     
     uri = graphene.String(description='URI')
     prefLabel = graphene.String(description='http://www.w3.org/2004/02/skos/core#prefLabel')
@@ -84,7 +83,7 @@ class Query(graphene.ObjectType):
         # 
 
         # access resources in federation:
-        resources = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all())
+        resources = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all()) + list(LobidResource.objects.all()) ### 
 
         # remove disabled resources
         resources = Helper.remove_disabled(resources, disabled)
@@ -113,7 +112,7 @@ class Helper:
     def remove_disabled(self,
                         resources: List[Union[SkosmosInstance, SparqlEndpoint]],
                         disabled: List[Union[SkosmosInstance, SparqlEndpoint]]) -> List[Union[SkosmosInstance, SparqlEndpoint]]:
-        """ Remove disaled resources """
+        """ Remove disabled resources """
         
         while len(disabled) > 0:
             for resource in resources:
@@ -137,54 +136,7 @@ class Helper:
             await session.close()
 
             return results
-
-    @classmethod
-    def selfcheck(self) -> None:
-        """ Disable slow resources """
-
-        resources = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all())
-
-        # "logic" searchword
-        logic = ["AgroVoc", "Bartoc", "Finto", "Getty AAT", "Getty ULAN", "Loterre", "LuSTRE", "OZCAR-Theia", "UNESCO", "data.ub.uio.no"]
-        logic_resources = []
-        for resource in resources:
-            if resource.name in logic:
-                logic_resources.append(resource)
-        logic_results = asyncio.run(self.fetch(logic_resources, "logic", 0, 5), debug=True)
-
-        # "law" searchword
-        law = ["Getty TGN", "Legilux"]
-        law_resources = []
-        for resource in resources:
-            if resource.name in law:
-                law_resources.append(resource)
-        law_results = asyncio.run(self.fetch(law_resources, "law", 0, 5), debug=True)
-
-        # "trumpet" searchword
-        trumpet = ["MIMO"]
-        trumpet_resources = []
-        for resource in resources:
-            if resource.name in trumpet:
-                trumpet_resources.append(resource)
-        trumpet_results = asyncio.run(self.fetch(trumpet_resources, "trumpet", 0, 5), debug=True)  
-        
-        results = logic_results + law_results + trumpet_results
-
-        slow_resources = []
-        for result in results:
-            if result.data == None:
-                slow_resources.append(result.name)
-
-        for resource in resources:
-            if resource.name in slow_resources:
-                resource.disabled = True
-                resource.save()
-                print(f'{resource.name} was disabled!')
-
-        # update Federation.timestamp
-        federation = Federation.objects.all()[0]
-        federation.save()
-   
+  
 class Normalize:
     """ Normalize results """
 
@@ -219,12 +171,18 @@ class Normalize:
         for endpoint in SparqlEndpoint.objects.all():
             sparqlnames.append(endpoint.name)
 
+        lobidnames = []
+        for resource in LobidResource.objects.all():
+            lobidnames.append(resource.name)
+
         if result.data == None: # here we catch timed out resources
             return []
         elif result.name in skosmosnames:
             return self.normalize_skosmos(result)
         elif result.name in sparqlnames:
             return self.normalize_sparql(result)
+        elif result.name in lobidnames:
+            return self.normalize_lobid(result)
         else:
             raise NameError
 
@@ -235,7 +193,7 @@ class Normalize:
         try:
             result.data['results']['bindings']
         except KeyError:
-            print(f'ERROR: Something is wrong with Normalize.normalize_sparql{result.name}!')
+            print(f'ERROR: Something is wrong with Normalize.normalize_sparql {result.name}!')
             return []
         else:
             bindings = result.data['results']['bindings']
@@ -277,7 +235,7 @@ class Normalize:
         try:
             result.data['results'] # here data format (perhaps also @context) could be verified; select already excludes None data
         except KeyError:
-            print(f'ERROR: Something is wrong with Normalize.normalize_skosmos{result.name}!')
+            print(f'ERROR: Something is wrong with Normalize.normalize_skosmos {result.name}!')
             return []
         else:
             normalized = []
@@ -292,13 +250,63 @@ class Normalize:
                 globalresult.source = result.name               # we set the source of globalresult to the name of the result (i.e., name of the resource where the result was queried)
                 normalized.append(globalresult)
 
-            # dev USE THIS for simple normalize w/out merge:
-            #howmany = len(normalized) # dev
-            #normalized = self.purge(normalized)
-            #print(f'{result.name} has {howmany - len(normalized)} duplicates and {len(normalized)} unique results') # dev
-            #return normalized # self.purge(normalized) w/o dev
+            howmany = len(normalized) # dev
+            merged = self.merge(normalized)
+            print(f'{result.name} has {howmany - len(merged)} duplicates and {len(merged)} unique results') # dev
+            return merged
 
-            # dev USE THIS for normalize with merge:
+    @classmethod
+    def normalize_lobid(self, result: Result) -> List[GlobalResult]:
+        """ Normalize lobid-gnd data """
+
+        try:
+            result.data['member']
+        except KeyError:
+            print(f'ERROR: Something is wrong with Normalize.normalize_lobid {result.name}!')
+            return []
+        else:
+            members = result.data['member']
+            normalized = []
+            for member in members:  
+                globalresult = GlobalResult()
+
+                try:
+                    member["id"]
+                except KeyError:
+                    continue # skip to next member
+                else:
+                    globalresult.uri = member["id"]
+
+                try:
+                    member["preferredName"]
+                except KeyError:
+                    globalresult.prefLabel = None
+                else:
+                    globalresult.prefLabel = member["preferredName"]
+
+                try:
+                    member["variantName"]
+                except KeyError:
+                    globalresult.altLabel = None
+                else:
+                    variants = []
+                    for variant in member["variantName"]:
+                        variants.append(variant)
+                    globalresult.altLabel = "; ".join(variants)
+
+                try:
+                    member["definition"]
+                except KeyError:
+                    globalresult.definition = None
+                else:
+                    definitions = []
+                    for definition in member["definition"]:
+                        definitions.append(definition)
+                    globalresult.definition = "; ".join(definitions)
+
+                globalresult.source = result.name
+                normalized.append(globalresult)
+                    
             howmany = len(normalized) # dev
             merged = self.merge(normalized)
             print(f'{result.name} has {howmany - len(merged)} duplicates and {len(merged)} unique results') # dev
@@ -356,8 +364,4 @@ class Normalize:
                 globalresults.append(globalresult)
 
         return globalresults
-                    
-                
-            
-            
-            
+    

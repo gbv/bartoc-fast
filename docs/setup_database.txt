@@ -9,12 +9,19 @@ B. set up admin:
 1. $PS sudo python3.7 manage.py createsuperuser
 
 C. add resources to db.sqlite3:
-1. log onto admin panel
-2. ... /admin/bartocfast/federation/ run "Populate federation..." on "Main federation"
+1. PS$ python3.7 manage.py shell (@ ~/git_environment/bartocfast/django)
+2. PS$ >>> from bartocfast.schema import Maintenance
+3. PS$ >>> Maintenance.populate()
+OR
+1. log onto admin
+2. run "Populate..." on Main federation
 
 D. disable slow resources:
 1. PS$ python3.7 manage.py shell (@ ~/git_environment/bartocfast/django)
-2. PS$ >>> from bartocfast.schema import Helper
-3. PS$ >>> Helper.selfcheck()
+2. PS$ >>> from bartocfast.schema import Maintenance
+3. PS$ >>> Maintenance.selfcheck()
+OR
+1. log onto admin
+2. run "Disable..." on Main federation
 
 <-stop

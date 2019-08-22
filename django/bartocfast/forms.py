@@ -3,13 +3,14 @@ from typing import List, Union
 from django import forms
 from django.db.utils import OperationalError
 
-from .models import SkosmosInstance, SparqlEndpoint
+from .models import SkosmosInstance, SparqlEndpoint, LobidResource
 
-def make_choices() -> List[Union[SkosmosInstance, SparqlEndpoint]]:
-    """ Return list of all resources in federation """
+def make_choices() -> List[Union[SkosmosInstance, SparqlEndpoint, LobidResource]]:
+    """ Return a sorted list of all resources in federation """
 
     try:
-        resources = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all())
+        resources = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all()) + list(LobidResource.objects.all())
+        resources.sort(key=lambda x: x.name.upper(), reverse=False)
     except OperationalError:
         return []
     else:
@@ -17,6 +18,7 @@ def make_choices() -> List[Union[SkosmosInstance, SparqlEndpoint]]:
         for resource in resources:
             if resource.disabled == False:
                 choices.append((resource.name, resource.name))
+
         return choices
 
 CHOICES = make_choices()

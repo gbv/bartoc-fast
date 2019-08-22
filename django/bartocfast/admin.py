@@ -2,15 +2,19 @@
 
 from django.contrib import admin
 
-from .models import Federation, SkosmosInstance, SkosmosQuery, SparqlEndpoint, SparqlQuery
+from .maintenance import Maintenance
+from .models import Federation, SkosmosInstance, SkosmosQuery, SparqlEndpoint, SparqlQuery, LobidResource, LobidQuery
 
 def populate(modeladmin, request, queryset):
-    for federation in queryset:
-        federation.populate()
-populate.short_description = "Populate federation with resources from EXCEL files. Overrides existing resources!"
+    Maintenance.populate()
+populate.short_description = "Populate federation with resources from .../fixtures"
+
+def selfcheck(modeladmin, request, queryset):
+    Maintenance.selfcheck()
+selfcheck.short_description = "Disable slow resources in federation"
 
 class FederationAdmin(admin.ModelAdmin):
-    actions = [populate]
+    actions = [populate, selfcheck]
 
     def get_actions(self, request):
         """ Disable delete action (drop-down menu) """
@@ -29,3 +33,5 @@ admin.site.register(SkosmosInstance)
 admin.site.register(SkosmosQuery)
 admin.site.register(SparqlEndpoint)
 admin.site.register(SparqlQuery)
+admin.site.register(LobidResource)
+admin.site.register(LobidQuery)
