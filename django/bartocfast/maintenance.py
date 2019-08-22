@@ -21,7 +21,19 @@ class Maintenance:
         resources = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all()) + list(LobidResource.objects.all()) ###
 
         # "logic" searchword
-        logic = ["AgroVoc", "Bartoc", "data.ub.uio.no", "Finto", "Getty AAT", "Getty ULAN", "lobid-gnd", "Loterre", "LuSTRE", "OZCAR-Theia", "UNESCO"]
+        logic = ["AgroVoc",
+                 "Bartoc",
+                 "data.ub.uio.no",
+                 "Finto",
+                 "Getty AAT",
+                 "Getty ULAN",
+                 "Irstea",
+                 "lobid-gnd",
+                 "Loterre",
+                 "LuSTRE",
+                 "OZCAR-Theia",
+                 "UAAV",
+                 "UNESCO"]
         logic_resources = []
         for resource in resources:
             if resource.name in logic:
@@ -29,7 +41,10 @@ class Maintenance:
         logic_results = asyncio.run(Helper.fetch(logic_resources, "logic", 0, 5), debug=True)
 
         # "law" searchword
-        law = ["Getty TGN", "Legilux"]
+        law = ["51.15.194.251",
+               "GACS",
+               "Getty TGN",
+               "Legilux"]
         law_resources = []
         for resource in resources:
             if resource.name in law:
@@ -42,9 +57,25 @@ class Maintenance:
         for resource in resources:
             if resource.name in trumpet:
                 trumpet_resources.append(resource)
-        trumpet_results = asyncio.run(Helper.fetch(trumpet_resources, "trumpet", 0, 5), debug=True)  
+        trumpet_results = asyncio.run(Helper.fetch(trumpet_resources, "trumpet", 0, 5), debug=True)
+
+         # "blog" searchword
+        blog = ["HTW Chur"]
+        blog_resources = []
+        for resource in resources:
+            if resource.name in blog:
+                blog_resources.append(resource)
+        blog_results = asyncio.run(Helper.fetch(blog_resources, "blog", 0, 5), debug=True)
+
+        # "material" searchword
+        material = ["FORTH"]
+        material_resources = []
+        for resource in resources:
+            if resource.name in material:
+                material_resources.append(resource)
+        material_results = asyncio.run(Helper.fetch(material_resources, "material", 0, 5), debug=True)  
         
-        results = logic_results + law_results + trumpet_results
+        results = logic_results + law_results + trumpet_results + blog_results + material_results
 
         slow_resources = []
         for result in results:
