@@ -67,17 +67,21 @@
 <script>
 	$(document).ready(function() {
 		$('#results').DataTable( {
-			"lengthMenu": [[25, 50, 100, -1], ["Show 25 results", "Show 50 results", "Show 100 results", "Show all results"]],
-			"scrollX": true,
+			"lengthMenu": [[10, 25, 50, 100, -1], ["Show 10 results", "Show 25 results", "Show 50 results", "Show 100 results", "Show all results"]],
+			"scrollX": false,
 			"language": {
-            "lengthMenu": "_MENU_",
-			"search": "_INPUT_",
-			searchPlaceholder: "Search results"
-			}
+				"lengthMenu": 		"_MENU_",
+				"search": 			"_INPUT_",
+				"searchPlaceholder": "Search results",
+				"info":           "Showing _START_ to _END_ of _TOTAL_ results",
+				"infoEmpty":      "Showing 0 to 0 of 0 results",
+				"infoFiltered":   "(filtered from _MAX_ total results)"
+				}
 		} );
     } );
 </script>
-
+<div style="margin-bottom:10px"
+</div>
 {% endblock %}
 
 
