@@ -39,13 +39,13 @@ class SparqlEndpoint(Resource):
         """ Prepare searchword for search """
 
         # remove excess whitespace:
-        " ".join(searchword.split())
+        " ".join(searchword.split())            
 
-        # open compounds ("gas station"):
-        searchword = searchword.replace(" ", " AND ")
-        
-        # remove special characters (umlaute, etc), applies to virtuoso endpoints (LuSTRE):
-        if "special" in self.context:
+        # virtuoso endpoints (LuSTRE) require special prep:
+        if "virtuoso" in self.context:
+            # connect open compounds (such as "gas station"):
+            searchword = searchword.replace(" ", " AND ")
+            # remove special characters (umlaute, etc)
             searchword = re.sub('[^A-Za-z0-9\s]+', '', searchword)
             " ".join(searchword.split())
             
