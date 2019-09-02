@@ -3,7 +3,7 @@
 import asyncio
 
 from django.db import models # https://docs.djangoproject.com/en/2.2/ref/models/fields/#django.db.models.Field
-from aiohttp import ClientSession, ClientTimeout
+from aiohttp import ClientSession, ClientTimeout, ClientOSError
 
 from ..utility import Database, Entry, Result, LOCAL_APP_PATH
 
@@ -45,6 +45,9 @@ class Resource(models.Model):
         
         except asyncio.TimeoutError:
             print(f'FETCH {self.name} ran out of time!') # dev
+            return Result(self.name, None, category)
+        except ClientOSError:
+            print(f'FETCH {self.name} did not respond!') # dev
             return Result(self.name, None, category)
 
 class Federation(models.Model):
