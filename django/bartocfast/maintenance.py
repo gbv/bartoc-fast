@@ -42,6 +42,7 @@ class Maintenance:
 
         # "law" searchword
         law = ["51.15.194.251",
+               "DemoVoc",
                "GACS",
                "Getty TGN",
                "Legilux"]
@@ -146,7 +147,7 @@ class Maintenance:
                                     timeout=row[3])
                 query.save()
 
-    @classmethod ###
+    @classmethod
     def populate_lobidresources(self) -> None:
         """ Populate federation with Lobid resources and their queries """
 
