@@ -110,20 +110,30 @@ class Helper:
 
     @classmethod
     def remove_disabled(self,
-                        resources: List[Union[SkosmosInstance, SparqlEndpoint]],
-                        disabled: List[Union[SkosmosInstance, SparqlEndpoint]]) -> List[Union[SkosmosInstance, SparqlEndpoint]]:
+                        resources: List[Union[SkosmosInstance,
+                                              SparqlEndpoint,
+                                              LobidResource]],
+                        disabled: List[Union[SkosmosInstance,
+                                             SparqlEndpoint,
+                                             LobidResource]]) -> List[Union[SkosmosInstance,
+                                                                            SparqlEndpoint,
+                                                                            LobidResource]]:
         """ Remove disabled resources """
         
-        while len(disabled) > 0:
-            for resource in resources:
-                if resource.name in disabled:
-                    resources.remove(resource)
-                    disabled.remove(resource.name)
+        for resource in resources:
+            # disabled by maintenance.selfcheck
+            if resource.disabled == True: 
+                resources.remove(resource)
+            # manually disabled by user
+            elif resource.name in disabled:
+                resources.remove(resource)
         return resources
 
     @classmethod
     async def fetch(self,
-                    resources: List[Union[SkosmosInstance, SparqlEndpoint]],
+                    resources: List[Union[SkosmosInstance,
+                                          SparqlEndpoint,
+                                          LobidResource]],
                     searchword: str,
                     category: int = 0,
                     maxsearchtime: int = DEF_MAXSEARCHTIME) -> List[Result]:
