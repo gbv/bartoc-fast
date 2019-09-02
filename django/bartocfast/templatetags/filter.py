@@ -3,6 +3,7 @@ from typing import List, Set, Dict, Tuple, Optional, Union
 from django import template
 
 from ..models import SkosmosInstance, SparqlEndpoint, LobidResource
+from ..utility import VERSION
 
 register = template.Library()
 

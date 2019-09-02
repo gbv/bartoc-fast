@@ -11,7 +11,7 @@ from django.shortcuts import render
 from .forms import BasicForm, AdvancedForm  
 from .models import Federation, SkosmosInstance, SparqlEndpoint, LobidResource
 from .schema import Query, Helper                   
-from .utility import DEF_MAXSEARCHTIME, DEF_DUPLICATES, DEF_DISABLED, Entry
+from .utility import VERSION, DEF_MAXSEARCHTIME, DEF_DUPLICATES, DEF_DISABLED, Entry
 
 QUERYSTRING = '''{
     resultsGlobal(SEARCHWORD, MAXSEARCHTIME, DUPLICATES, DISABLED) {
@@ -48,12 +48,12 @@ def index(request: HttpRequest) -> HttpResponse:
             arguments = form.cleaned_data
             requests = gather_requests(form)
             requests.sort(key=lambda x: x.name.upper(), reverse=False)
-            context = {'landing_page': 'active', 'results': results, 'arguments': arguments, 'requests': requests} 
+            context = {'landing_page': 'active', 'version': VERSION, 'results': results, 'arguments': arguments, 'requests': requests} 
             return render(request, 'bartocfast/results.html', context)
     else:
         form = BasicForm()
     
-    context = {'form': form, 'landing_page': 'active'}
+    context = {'form': form, 'landing_page': 'active', 'version': VERSION}
     return render(request, 'bartocfast/index.html', context)
 
 def about(request: HttpRequest) -> HttpResponse:
@@ -63,7 +63,7 @@ def about(request: HttpRequest) -> HttpResponse:
     resources = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all()) + list(LobidResource.objects.all())
     resources.sort(key=lambda x: x.name.upper(), reverse=False)
 
-    context = {'about_page': 'active', 'federation': federation, 'resources': resources}
+    context = {'about_page': 'active', 'version': VERSION, 'federation': federation, 'resources': resources}
     return render(request, 'bartocfast/about.html', context)
 
 def advanced(request: HttpRequest) -> HttpResponse:
@@ -90,12 +90,12 @@ def advanced(request: HttpRequest) -> HttpResponse:
             arguments = form.cleaned_data
             requests = gather_requests(form)
             requests.sort(key=lambda x: x.name.upper(), reverse=False)
-            context = {'advanced_page': 'active', 'results': results, 'arguments': arguments, 'requests': requests}
+            context = {'advanced_page': 'active', 'version': VERSION, 'results': results, 'arguments': arguments, 'requests': requests}
             return render(request, 'bartocfast/results.html', context)
     else:
         form = AdvancedForm()
 
-    context = {'form': form, 'advanced_page': 'active'}
+    context = {'form': form, 'advanced_page': 'active', 'version': VERSION}
     return render(request, 'bartocfast/advanced.html', context)
 
 def data(request: HttpRequest) -> HttpResponse:
@@ -117,7 +117,7 @@ def data(request: HttpRequest) -> HttpResponse:
             return HttpResponse(result_pretty, content_type='application/json')
     else:
         form = AdvancedForm()
-    context = {'form': form, 'data_page': 'active'}
+    context = {'form': form, 'data_page': 'active', 'version': VERSION}
     return render(request, 'bartocfast/data.html', context)
 
 def parse(form: Union[BasicForm, AdvancedForm]) -> str:
