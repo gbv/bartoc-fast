@@ -1,6 +1,7 @@
 """ views.py """
 
 from typing import List, Set, Dict, Tuple, Optional, Union
+from collections import OrderedDict
 
 import json
 import graphene
@@ -10,11 +11,11 @@ from django.shortcuts import render
 
 from .forms import BasicForm, AdvancedForm  
 from .models import Federation, SkosmosInstance, SparqlEndpoint, LobidResource
-from .schema import Query, Helper                   
+from .schema import RESOURCES, Query, Helper                   
 from .utility import VERSION, DEF_MAXSEARCHTIME, DEF_DUPLICATES, DEF_DISABLED, Entry
 
 QUERYSTRING = '''{
-    resultsGlobal(SEARCHWORD, MAXSEARCHTIME, DUPLICATES, DISABLED) {
+    results(SEARCHWORD, MAXSEARCHTIME, DUPLICATES, DISABLED) {
     uri
     prefLabel
     altLabel
@@ -40,7 +41,7 @@ def index(request: HttpRequest) -> HttpResponse:
             result = schema.execute(query_string)
            
             try:
-                results = result.data.get('resultsGlobal') # we just need the values of 'resultsGlobal'
+                results = result.data.get('results') # we just need the values of 'results'
             except AttributeError:  # in case there are no results:
                 results = None
                 print("views.index: AttributeError: invalid search string!")
@@ -82,7 +83,7 @@ def advanced(request: HttpRequest) -> HttpResponse:
             result = schema.execute(query_string)
 
             try:
-                results = result.data.get('resultsGlobal') 
+                results = result.data.get('results') 
             except AttributeError:  
                 results = None
                 print("views.advanced: AttributeError: invalid search string!")
@@ -98,8 +99,8 @@ def advanced(request: HttpRequest) -> HttpResponse:
     context = {'form': form, 'advanced_page': 'active', 'version': VERSION}
     return render(request, 'bartocfast/advanced.html', context)
 
-def data(request: HttpRequest) -> HttpResponse:
-    """ Data retrieval """
+def api(request: HttpRequest) -> HttpResponse:
+    """ API """
 
     if request.method == 'GET':         
         form = AdvancedForm(request.GET)   
@@ -112,13 +113,16 @@ def data(request: HttpRequest) -> HttpResponse:
  
             schema = graphene.Schema(query=Query)
             result = schema.execute(query_string)
-            
-            result_pretty = json.dumps(result.data, sort_keys=True, indent=4)
-            return HttpResponse(result_pretty, content_type='application/json')
+
+            results_id = "https://bartoc-fast.ub.unibas.ch/bartocfast/api?" + request.GET.urlencode()
+            jsonld = make_jsonld(make_context(form, results_id), result.data)
+            jsonld_pretty = json.dumps(jsonld, indent=4)
+
+            return HttpResponse(jsonld_pretty, content_type='application/json')
     else:
         form = AdvancedForm()
     context = {'form': form, 'data_page': 'active', 'version': VERSION}
-    return render(request, 'bartocfast/data.html', context)
+    return render(request, 'bartocfast/api.html', context)
 
 def parse(form: Union[BasicForm, AdvancedForm]) -> str:
     """ Update QUERYSTRING with arguments from form (if any) or default values """
@@ -180,7 +184,40 @@ def gather_requests(form: Union[BasicForm, AdvancedForm]) -> List[Entry]:
         requests.append(Entry(resource.name, request))
     return requests
 
+def make_context(form: AdvancedForm, results_id: str) -> OrderedDict:
+    """ Make a JSON-LD @context based on form """
 
+    try:
+        disabled = form.cleaned_data['disabled'][:]
+        resources = Helper.remove_disabled(RESOURCES, disabled)
+    except KeyError:
+        pass
 
-            
-      
+    context = OrderedDict()
+    context.update( { "skos" : "http://www.w3.org/2004/02/skos/core#" } )
+
+    for resource in resources:
+        context.update( { resource.name : resource.url } )
+    
+    context.update( { "results" : { "@id": results_id,
+                                    "@type" : "@id",
+                                    "@container" : "@set" }
+                      } )
+
+    context.update( { "altLabel" : "skos:altLabel",
+                      "definition" : "skos:definition",
+                      "hiddenLabel" : "skos:hiddenLabel",
+                      "prefLabel" : "skos:prefLabel",
+                      "source" : "skos:ConceptScheme",
+                      "uri" : "@id"
+                      } )
+
+    return context
+
+def make_jsonld(context: OrderedDict, results: OrderedDict) -> OrderedDict:
+    """ Join @context and results to produce a JSON-LD """
+    
+    jsonld = OrderedDict()
+    jsonld.update( { "@context" : context } )
+    jsonld.update(results)
+    return jsonld

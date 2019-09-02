@@ -8,5 +8,5 @@ urlpatterns = [
     path('about', views.about, name='about'),                           # about page
     path('advanced', views.advanced, name='advanced'),                  # advanced search
     path('expert', GraphQLView.as_view(graphiql=True),name='expert'),   # expert view
-    path('data', views.data, name='data'),                              # data output
+    path('api', views.api, name='api'),                                 # API
 ]

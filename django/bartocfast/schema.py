@@ -7,8 +7,10 @@ from typing import List, Set, Dict, Union
 import graphene
 from aiohttp import ClientSession, ClientTimeout
 
-from .models import Federation, SkosmosInstance, SparqlEndpoint, LobidResource
+from .models import Federation, Resource, SkosmosInstance, SparqlEndpoint, LobidResource
 from .utility import Result, MappingDatabase, DEF_MAXSEARCHTIME, DEF_DISABLED # local
+
+RESOURCES = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all()) + list(LobidResource.objects.all())
 
 class GlobalResult(graphene.ObjectType):
     """ Result of a global query """
@@ -64,7 +66,7 @@ class GlobalResult(graphene.ObjectType):
 class Query(graphene.ObjectType):
     """ Query """
 
-    results_global = graphene.List(GlobalResult,
+    results = graphene.List(GlobalResult,
                                    searchword=graphene.String(required=True),
                                    category=graphene.Argument(graphene.Int, default_value=0),
                                    maxsearchtime=graphene.Argument(graphene.Int, default_value=DEF_MAXSEARCHTIME),
@@ -72,8 +74,8 @@ class Query(graphene.ObjectType):
                                    disabled=graphene.Argument(graphene.List(graphene.String), default_value=DEF_DISABLED)
                                    )
 
-    def resolve_results_global(self, info, searchword, category, maxsearchtime, duplicates, disabled):
-        """ Resolve Global query type """
+    def resolve_results(self, info, searchword, category, maxsearchtime, duplicates, disabled):
+        """ Resolve a global query """
 
         start = time.time()                                 # dev
 
@@ -110,14 +112,8 @@ class Helper:
 
     @classmethod
     def remove_disabled(self,
-                        resources: List[Union[SkosmosInstance,
-                                              SparqlEndpoint,
-                                              LobidResource]],
-                        disabled: List[Union[SkosmosInstance,
-                                             SparqlEndpoint,
-                                             LobidResource]]) -> List[Union[SkosmosInstance,
-                                                                            SparqlEndpoint,
-                                                                            LobidResource]]:
+                        resources: List[Resource],
+                        disabled: List[Resource]) -> List[Resource]:
         """ Remove disabled resources """
         
         for resource in resources:
@@ -131,9 +127,7 @@ class Helper:
 
     @classmethod
     async def fetch(self,
-                    resources: List[Union[SkosmosInstance,
-                                          SparqlEndpoint,
-                                          LobidResource]],
+                    resources: List[Resource],
                     searchword: str,
                     category: int = 0,
                     maxsearchtime: int = DEF_MAXSEARCHTIME) -> List[Result]:
