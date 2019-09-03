@@ -70,6 +70,9 @@ def about(request: HttpRequest) -> HttpResponse:
 def advanced(request: HttpRequest) -> HttpResponse:
     """ Advanced search """
 
+    request.GET = request.GET.copy()
+    request.GET['maxsearchtime'] = DEF_MAXSEARCHTIME
+
     if request.method == 'GET':                             
         form = AdvancedForm(request.GET)        
         if form.is_valid():
@@ -102,12 +105,15 @@ def advanced(request: HttpRequest) -> HttpResponse:
 def api(request: HttpRequest) -> HttpResponse:
     """ API """
 
+    request.GET = request.GET.copy()
+    request.GET['maxsearchtime'] = DEF_MAXSEARCHTIME
+
     if request.method == 'GET':         
-        form = AdvancedForm(request.GET)   
+        form = AdvancedForm(request.GET)
         if form.is_valid():
 
             query_string = parse(form)
-            
+
             print(f'-->START') # dev
             print(query_string) # dev
  
@@ -121,7 +127,7 @@ def api(request: HttpRequest) -> HttpResponse:
             return HttpResponse(jsonld_pretty, content_type='application/json')
     else:
         form = AdvancedForm()
-    context = {'form': form, 'data_page': 'active', 'version': VERSION}
+    context = {'form': form, 'api_page': 'active', 'version': VERSION}
     return render(request, 'bartocfast/api.html', context)
 
 def parse(form: Union[BasicForm, AdvancedForm]) -> str:
@@ -136,8 +142,7 @@ def parse(form: Union[BasicForm, AdvancedForm]) -> str:
     # maxsearchtime:
     try:
         maxsearchtime = form.cleaned_data['maxsearchtime']
-        assert maxsearchtime is not None
-    except (KeyError, AssertionError):
+    except KeyError:
         form.cleaned_data['maxsearchtime'] = DEF_MAXSEARCHTIME # pass to context
         query_string = query_string.replace('MAXSEARCHTIME', f'maxsearchtime: {DEF_MAXSEARCHTIME}') # no form option (see basic)
     else:

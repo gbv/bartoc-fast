@@ -43,13 +43,13 @@ class AdvancedForm(forms.Form):
                                  help_text='Truncation (color*) and wildcards (col*r) are supported, Boolean operators are not supported',
                                  required=True)
     
-    maxsearchtime = forms.IntegerField(label='Maximum search time:',
+    maxsearchtime = forms.IntegerField(label='Maximum search time:',                                       
                                        widget=forms.NumberInput(attrs={'placeholder': 'Enter n seconds',
                                                                        'class': 'form-control'}),
                                        max_value=60,
                                        min_value=1,
                                        help_text='1 < n < 60, default n = 5',
-                                       required=False)
+                                       required=True)
 
     duplicates = forms.BooleanField(label='Display duplicates',
                                            widget=forms.CheckboxInput(),
