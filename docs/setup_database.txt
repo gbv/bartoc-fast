@@ -1,4 +1,4 @@
-lsset up django database:
+set up django database:
 
 ->start
 
@@ -13,7 +13,7 @@ C. add resources to db.sqlite3:
 2. PS$ >>> from bartocfast.maintenance import Maintenance
 3. PS$ >>> Maintenance.populate()
 OR
-1. log onto admin
+1. log onto admin:
 2. run "Populate..." on Main federation
 
 D. disable slow resources:
@@ -23,5 +23,8 @@ D. disable slow resources:
 OR
 1. log onto admin
 2. run "Disable..." on Main federation
+
+E. restart service:
+1. PS$ sudo systemctl restart bartocfast
 
 <-stop
