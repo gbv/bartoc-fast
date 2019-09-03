@@ -41,8 +41,7 @@ class Resource(models.Model):
 
         try:
             result = await self.search(session, searchword, category)
-            return result
-        
+            return result  
         except asyncio.TimeoutError:
             print(f'FETCH {self.name} ran out of time!') # dev
             return Result(self.name, None, category)

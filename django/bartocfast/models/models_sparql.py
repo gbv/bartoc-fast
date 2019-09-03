@@ -80,7 +80,11 @@ class SparqlEndpoint(Resource):
 
         async with session.get(request) as response:
 
-            data = await response.json()
+            try:
+                data = await response.json()
+            except Exception:
+                print(f'ERROR: Something went wrong with {self.name}!') # dev
+                return Result(self.name, None, category)
 
             end = time.time() # dev
             print(f'FETCH {self.name} took {end - start}') # dev
