@@ -7,7 +7,7 @@ from os import path
 
 from openpyxl import load_workbook
 
-VERSION = "v1.0"
+VERSION = "v1.0.1"
 LOCAL_APP_PATH = path.dirname(path.abspath(__file__))
 DEF_MAXSEARCHTIME = 5 # default search time in seconds
 DEF_DUPLICATES = False # default value for duplicates argument

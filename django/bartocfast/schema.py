@@ -88,7 +88,9 @@ class Query(graphene.ObjectType):
         resources = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all()) + list(LobidResource.objects.all()) ### 
 
         # remove disabled resources
+        print(disabled) ###
         resources = Helper.remove_disabled(resources, disabled)
+        print(resources) ###
                             
         end_init = time.time()                              # dev
         print(f'***INITIALIZE took {end_init - start}')     # dev
@@ -115,14 +117,19 @@ class Helper:
                         resources: List[Resource],
                         disabled: List[Resource]) -> List[Resource]:
         """ Remove disabled resources """
-        
+
+        # disabled by maintenance.selfcheck
         for resource in resources:
-            # disabled by maintenance.selfcheck
             if resource.disabled == True: 
                 resources.remove(resource)
-            # manually disabled by user
-            elif resource.name in disabled:
-                resources.remove(resource)
+
+        # manually disabled by user
+        while len(disabled) > 0:
+            for resource in resources:
+                if resource.name in disabled:
+                    resources.remove(resource)
+                    disabled.remove(resource.name)
+
         return resources
 
     @classmethod
