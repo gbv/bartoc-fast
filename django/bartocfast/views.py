@@ -42,7 +42,7 @@ def index(request: HttpRequest) -> HttpResponse:
             result = schema.execute(query_string)
 
             results_id = "https://bartoc-fast.ub.unibas.ch/bartocfast/?" + request.GET.urlencode()
-            log(results_id)
+            #log(results_id)
            
             try:
                 results = result.data.get('results') # we just need the values of 'results'
@@ -90,7 +90,7 @@ def advanced(request: HttpRequest) -> HttpResponse:
             result = schema.execute(query_string)
 
             results_id = "https://bartoc-fast.ub.unibas.ch/bartocfast/advanced?" + request.GET.urlencode()
-            log(results_id)
+            #log(results_id)
 
             try:
                 results = result.data.get('results') 
@@ -128,7 +128,7 @@ def api(request: HttpRequest) -> HttpResponse:
             result = schema.execute(query_string)
 
             results_id = "https://bartoc-fast.ub.unibas.ch/bartocfast/api?" + request.GET.urlencode()
-            log(results_id)
+            #log(results_id)
 
             jsonld = make_jsonld(make_context(form, results_id), result.data)
             jsonld_pretty = json.dumps(jsonld, indent=4)
@@ -238,7 +238,7 @@ def make_jsonld(context: OrderedDict, results: OrderedDict) -> OrderedDict:
     jsonld.update(results)
     return jsonld
 
-def log(url: str) -> None:
+def test(url: str) -> None: ###
     """ Add url with timestamp to logging database """
 
     now = (datetime.now()).strftime("%Y:%m:%d:%H:%M:%S\n")
