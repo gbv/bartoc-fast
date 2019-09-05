@@ -1,3 +1,0 @@
-https://bartoc-fast.ub.unibas.ch/bartocfast/?searchword=trump@2019:09:05:14:39:24
-https://bartoc-fast.ub.unibas.ch/bartocfast/advanced?searchword=search&maxsearchtime=5&disabled=Bartoc&disabled=data.ub.uio.no@2019:09:05:14:39:42
-https://bartoc-fast.ub.unibas.ch/bartocfast/api?searchword=karl&maxsearchtime=5@2019:09:05:14:40:11
