@@ -18,10 +18,15 @@ D. set up repository
 E. set up django database:
 1. see ... /docs/setup_database.txt
 
-F. set up django static: 
+F. set up logging:
+1. create /logs/queries.txt (@ ~/git_environment/bartocfast/django/bartocfast):
+a. $PS sudo mkdir logs (@ ~/git_environment/bartocfast/django/bartocfast)
+b. $PS sudo touch queries.txt (@ ~/git_environment/bartocfast/django/bartocfast/logs)
+
+G. set up django static: 
 1. $PS sudo python3.7 manage.py collectstatic (@ ~/git_environment/bartocfast/django)
 
-G. run development server:
+H. run development server:
 1. $PS sudo python3.7 manage.py runserver 0.0.0.0:8000 (@ ~/git_environment/bartocfast/django)
 
 <-stop
