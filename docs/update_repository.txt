@@ -8,4 +8,7 @@ A. log onto server:
 B. update repository:
 1. $PS sudo git pull origin master (@ ~/git_env/bartocfast$)
 
+C. restart service:
+1. $PS sudo systemctl restart bartocfast
+
 <-stop
