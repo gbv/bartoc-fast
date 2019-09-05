@@ -2,6 +2,7 @@
 
 from typing import List, Set, Dict, Tuple, Optional, Union
 from collections import OrderedDict
+from datetime import datetime
 
 import json
 import graphene
@@ -12,7 +13,7 @@ from django.shortcuts import render
 from .forms import BasicForm, AdvancedForm  
 from .models import Federation, SkosmosInstance, SparqlEndpoint, LobidResource
 from .schema import RESOURCES, Query, Helper                   
-from .utility import VERSION, DEF_MAXSEARCHTIME, DEF_DUPLICATES, DEF_DISABLED, Entry
+from .utility import VERSION, DEF_MAXSEARCHTIME, DEF_DUPLICATES, DEF_DISABLED, LOCAL_APP_PATH, Entry
 
 QUERYSTRING = '''{
     results(SEARCHWORD, MAXSEARCHTIME, DUPLICATES, DISABLED) {
@@ -39,6 +40,9 @@ def index(request: HttpRequest) -> HttpResponse:
 
             schema = graphene.Schema(query=Query)
             result = schema.execute(query_string)
+
+            results_id = "https://bartoc-fast.ub.unibas.ch/bartocfast/?" + request.GET.urlencode()
+            log(results_id)
            
             try:
                 results = result.data.get('results') # we just need the values of 'results'
@@ -85,6 +89,9 @@ def advanced(request: HttpRequest) -> HttpResponse:
             schema = graphene.Schema(query=Query)
             result = schema.execute(query_string)
 
+            results_id = "https://bartoc-fast.ub.unibas.ch/bartocfast/advanced?" + request.GET.urlencode()
+            log(results_id)
+
             try:
                 results = result.data.get('results') 
             except AttributeError:  
@@ -121,6 +128,8 @@ def api(request: HttpRequest) -> HttpResponse:
             result = schema.execute(query_string)
 
             results_id = "https://bartoc-fast.ub.unibas.ch/bartocfast/api?" + request.GET.urlencode()
+            log(results_id)
+
             jsonld = make_jsonld(make_context(form, results_id), result.data)
             jsonld_pretty = json.dumps(jsonld, indent=4)
 
@@ -228,3 +237,13 @@ def make_jsonld(context: OrderedDict, results: OrderedDict) -> OrderedDict:
     jsonld.update( { "@context" : context } )
     jsonld.update(results)
     return jsonld
+
+def log(url: str) -> None:
+    """ Add url with timestamp to logging database """
+
+    now = (datetime.now()).strftime("%Y:%m:%d:%H:%M:%S\n")
+    urlnow = url + "@" + now
+    
+    path = LOCAL_APP_PATH + "/logs/queries.txt"
+    file = open(path, "a")
+    file.write(urlnow)

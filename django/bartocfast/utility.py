@@ -92,4 +92,3 @@ class Mapping:
         self.uri = uri
         self.equivalences = equivalences
 
-
