@@ -192,9 +192,11 @@ def gather_requests(form: Union[BasicForm, AdvancedForm]) -> List[Entry]:
 def make_context(form: AdvancedForm, results_id: str) -> OrderedDict:
     """ Make a JSON-LD @context based on form """
 
+    resources = RESOURCES.copy() 
+
     try:
         disabled = form.cleaned_data['disabled'][:]
-        resources = Helper.remove_disabled(RESOURCES, disabled)
+        resources = Helper.remove_disabled(resources, disabled)
     except KeyError:
         pass
 
