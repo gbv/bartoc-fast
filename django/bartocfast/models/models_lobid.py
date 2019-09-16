@@ -53,9 +53,6 @@ class LobidResource(Resource):
         """ Coroutine: send query to Lobid resource """
 
         start = time.time() # dev
-
-        if self.disabled == True:
-            return Result(self.name, None, category)
         
         query = self.select(category)
         request = self.construct_request(searchword, query)

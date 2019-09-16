@@ -3,7 +3,7 @@
 from django.contrib import admin
 
 from .maintenance import Maintenance
-from .models import Federation, SkosmosInstance, SkosmosQuery, SparqlEndpoint, SparqlQuery, LobidResource, LobidQuery
+from .models import Federation, SkosmosInstance, SkosmosQuery, SparqlEndpoint, SparqlQuery, LobidResource, LobidQuery, LdapiEndpoint, LdapiQuery
 
 def populate(modeladmin, request, queryset):
     Maintenance.populate()
@@ -35,3 +35,5 @@ admin.site.register(SparqlEndpoint)
 admin.site.register(SparqlQuery)
 admin.site.register(LobidResource)
 admin.site.register(LobidQuery)
+admin.site.register(LdapiEndpoint)
+admin.site.register(LdapiQuery)

@@ -5,7 +5,7 @@ from typing import List, Set, Dict, Union
 
 from openpyxl import load_workbook
 
-from .models import Federation, SkosmosInstance, SkosmosQuery, SparqlEndpoint, SparqlQuery, LobidResource, LobidQuery
+from .models import Federation, SkosmosInstance, SkosmosQuery, SparqlEndpoint, SparqlQuery, LobidResource, LobidQuery, LdapiEndpoint, LdapiQuery
 from .schema import Helper
 from .utility import LOCAL_APP_PATH
 
@@ -25,8 +25,8 @@ class Maintenance:
                  "Bartoc",
                  "data.ub.uio.no",
                  "Finto",
-                 "Getty AAT",
-                 "Getty ULAN",
+                 "GettyAAT",
+                 "GettyULAN",
                  "Irstea",
                  "lobid-gnd",
                  "Loterre",
@@ -44,8 +44,9 @@ class Maintenance:
         law = ["51.15.194.251",
                "DemoVoc",
                "GACS",
-               "Getty TGN",
-               "Legilux"]
+               "GettyTGN",
+               "Legilux",
+               "ScoLOMFR"]
         law_resources = []
         for resource in resources:
             if resource.name in law:
@@ -100,6 +101,7 @@ class Maintenance:
         self.populate_skosmosinstances()
         self.populate_sparqlendpoints()
         self.populate_lobidresources()
+        self.populate_ldapiendpoints()
 
     @classmethod
     def populate_skosmosinstances(self) -> None: 
@@ -168,4 +170,56 @@ class Maintenance:
                                      description="NA",
                                      category=0,
                                      timeout=row[3])
-                query.save()  
+                query.save()
+
+    @classmethod
+    def prepare_ldapiendpoints(self) -> None:
+        """ Prepare ldapiendpoints.xlsx """
+
+        ldapiendpoints = load_workbook(LOCAL_APP_PATH + "/fixtures/ldapiendpoints.xlsx")
+
+        for ws in ldapiendpoints:
+            for row in ws.iter_rows(min_row=2, min_col=1, max_col=2, values_only=False):
+                rawname = row[1].value
+                rawname = rawname.replace("http://vocabs.ands.org.au/repository/api/lda/", "")
+                namelist = rawname.split("/")
+                if namelist[len(namelist)-2] == "current":
+                    row[0].value = namelist[len(namelist)-3]
+                else:
+                    row[0].value = namelist[len(namelist)-2]
+
+        ldapiendpoints.save(LOCAL_APP_PATH + "/fixtures/ldapiendpoints.xlsx")
+
+    @classmethod
+    def populate_ldapiendpoints(self) -> None: 
+        """ Populate federation with Linked-Data-API endpoints and their queries """
+
+        self.prepare_ldapiendpoints()
+        LdapiEndpoint.objects.all().delete()
+        
+        ldapiendpoints = load_workbook(LOCAL_APP_PATH + "/fixtures/ldapiendpoints.xlsx")
+        for ws in ldapiendpoints:
+            
+            for row in ws.iter_rows(min_row=2, min_col=1, max_col=4, values_only=True):   
+                endpoint = LdapiEndpoint(federation=Federation.objects.all()[0],
+                                         name=row[0],
+                                         url=row[1],
+                                         disabled=True,
+                                         context=row[2])
+                endpoint.save()
+
+                query = LdapiQuery(ldapiendpoint=endpoint, # constructs query of cat 0
+                                     querystring="?labelcontains=",
+                                     description="NA",
+                                     category=0,
+                                     timeout=row[3])
+                query.save()
+
+
+                
+            
+
+        
+
+
+        

@@ -9,7 +9,7 @@ D. write migration for resource & query
 E. register resource & query (@ admin.py)
 F. add Normalize method to parse resource & query results (@ schema.py)
 G. add resource to about function (@ views.py)
-H. add resource to gather_requests function (@ views.py)
+H. add resource to gather_requests and make_context functions (@ views.py)
 I. add resource to get_type function (@ filter.py)
 J. add resource to  make_choices (@ forms.py)
 

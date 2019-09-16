@@ -12,7 +12,7 @@ from django.shortcuts import render
 
 from .forms import BasicForm, AdvancedForm  
 from .models import Federation, SkosmosInstance, SparqlEndpoint, LobidResource
-from .schema import RESOURCES, Query, Helper                   
+from .schema import Query, Helper                   
 from .utility import VERSION, DEF_MAXSEARCHTIME, DEF_DUPLICATES, DEF_DISABLED, LOCAL_APP_PATH, Entry
 
 QUERYSTRING = '''{
@@ -39,7 +39,7 @@ def index(request: HttpRequest) -> HttpResponse:
             print(query_string) # dev
 
             schema = graphene.Schema(query=Query)
-            result = schema.execute(query_string)
+            result = schema.execute(query_string, context_value="basic")
 
             results_id = "https://bartoc-fast.ub.unibas.ch/bartocfast/?" + request.GET.urlencode()
             log(results_id)
@@ -64,8 +64,8 @@ def index(request: HttpRequest) -> HttpResponse:
 def about(request: HttpRequest) -> HttpResponse:
     """ About page """
 
-    federation = federation = Federation.objects.all()[0] # perhaps a FEDERATION constant in models or utility?
-    resources = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all()) + list(LobidResource.objects.all())
+    federation = federation = Federation.objects.all()[0]
+    resources = Helper.make_display_resources()
     resources.sort(key=lambda x: x.name.upper(), reverse=False)
 
     context = {'about_page': 'active', 'version': VERSION, 'federation': federation, 'resources': resources}
@@ -74,11 +74,9 @@ def about(request: HttpRequest) -> HttpResponse:
 def advanced(request: HttpRequest) -> HttpResponse:
     """ Advanced search """
 
-    request.GET = request.GET.copy()
-    request.GET['maxsearchtime'] = DEF_MAXSEARCHTIME
+    if request.method == 'GET':
+        form = AdvancedForm(request.GET) 
 
-    if request.method == 'GET':                             
-        form = AdvancedForm(request.GET)        
         if form.is_valid():
 
             query_string = parse(form)
@@ -87,7 +85,7 @@ def advanced(request: HttpRequest) -> HttpResponse:
             print(query_string) # dev
 
             schema = graphene.Schema(query=Query)
-            result = schema.execute(query_string)
+            result = schema.execute(query_string, context_value="advanced")
 
             results_id = "https://bartoc-fast.ub.unibas.ch/bartocfast/advanced?" + request.GET.urlencode()
             log(results_id)
@@ -102,7 +100,11 @@ def advanced(request: HttpRequest) -> HttpResponse:
             requests = gather_requests(form)
             requests.sort(key=lambda x: x.name.upper(), reverse=False)
             context = {'advanced_page': 'active', 'version': VERSION, 'results': results, 'arguments': arguments, 'requests': requests}
+
             return render(request, 'bartocfast/results.html', context)
+
+        else:
+            form = AdvancedForm({'maxsearchtime': DEF_MAXSEARCHTIME, 'disabled': Helper.make_display_disabled()})
     else:
         form = AdvancedForm()
 
@@ -112,11 +114,9 @@ def advanced(request: HttpRequest) -> HttpResponse:
 def api(request: HttpRequest) -> HttpResponse:
     """ API """
 
-    request.GET = request.GET.copy()
-    request.GET['maxsearchtime'] = DEF_MAXSEARCHTIME
-
     if request.method == 'GET':         
         form = AdvancedForm(request.GET)
+        
         if form.is_valid():
 
             query_string = parse(form)
@@ -125,7 +125,7 @@ def api(request: HttpRequest) -> HttpResponse:
             print(query_string) # dev
  
             schema = graphene.Schema(query=Query)
-            result = schema.execute(query_string)
+            result = schema.execute(query_string, context_value="api")
 
             results_id = "https://bartoc-fast.ub.unibas.ch/bartocfast/api?" + request.GET.urlencode()
             log(results_id)
@@ -134,14 +134,18 @@ def api(request: HttpRequest) -> HttpResponse:
             jsonld_pretty = json.dumps(jsonld, indent=4)
 
             return HttpResponse(jsonld_pretty, content_type='application/json')
+        
+        else:
+            form = AdvancedForm({'maxsearchtime': DEF_MAXSEARCHTIME, 'disabled': Helper.make_display_disabled()})
     else:
         form = AdvancedForm()
+        
     context = {'form': form, 'api_page': 'active', 'version': VERSION}
     return render(request, 'bartocfast/api.html', context)
 
 def parse(form: Union[BasicForm, AdvancedForm]) -> str:
     """ Update QUERYSTRING with arguments from form (if any) or default values """
-
+    
     query_string = QUERYSTRING
 
     # searchword:
@@ -184,12 +188,28 @@ def parse(form: Union[BasicForm, AdvancedForm]) -> str:
 def gather_requests(form: Union[BasicForm, AdvancedForm]) -> List[Entry]:
     """ Gather all requests sent to resources """
 
-    resources = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all()) + list(LobidResource.objects.all())
-    try:
-        disabled = form.cleaned_data['disabled'][:]
-        resources = Helper.remove_disabled(resources, disabled)
-    except KeyError:
-        pass       
+    if type(form) == BasicForm:
+            resources = Helper.make_resources()
+            try:
+                disabled = form.cleaned_data['disabled'][:]
+                resources = Helper.remove_disabled(resources, disabled)
+            except KeyError:
+                pass 
+    else:
+        try:
+            disabled = form.cleaned_data['disabled'][:]
+        except KeyError:
+            pass
+        else: # dev: needs to be generalized
+            if "Research-Vocabularies-Australia" in disabled:
+                resources = Helper.make_resources()
+                disabled.remove("Research-Vocabularies-Australia")
+                resources = Helper.remove_disabled(resources, disabled)
+            else:
+                resources = Helper.make_resources()
+                resources = Helper.remove_disabled(resources, disabled)
+                resources = resources + Helper.make_slaves()
+  
     searchword = form.cleaned_data['searchword']
     requests = []
     for resource in resources:
@@ -201,13 +221,21 @@ def gather_requests(form: Union[BasicForm, AdvancedForm]) -> List[Entry]:
 def make_context(form: AdvancedForm, results_id: str) -> OrderedDict:
     """ Make a JSON-LD @context based on form """
 
-    resources = RESOURCES.copy() 
+    resources = Helper.make_resources()
 
     try:
         disabled = form.cleaned_data['disabled'][:]
-        resources = Helper.remove_disabled(resources, disabled)
     except KeyError:
         pass
+    else: # dev: needs to be generalized
+        if "Research-Vocabularies-Australia" in disabled:
+            resources = Helper.make_resources()
+            disabled.remove("Research-Vocabularies-Australia")
+            resources = Helper.remove_disabled(resources, disabled)
+        else:
+            resources = Helper.make_resources()
+            resources = Helper.remove_disabled(resources, disabled)
+            resources = resources + Helper.make_slaves()
 
     context = OrderedDict()
     context.update( { "skos" : "http://www.w3.org/2004/02/skos/core#" } )

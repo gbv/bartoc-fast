@@ -3,22 +3,22 @@ from typing import List, Union
 from django import forms
 from django.db.utils import OperationalError
 
-from .models import SkosmosInstance, SparqlEndpoint, LobidResource
+from .models import Resource
+from .schema import Helper
 
-def make_choices() -> List[Union[SkosmosInstance, SparqlEndpoint, LobidResource]]:
+def make_choices() -> List[Resource]:
     """ Return a sorted list of all resources in federation """
 
     try:
-        resources = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all()) + list(LobidResource.objects.all())
+        resources = Helper.make_display_resources()
         resources.sort(key=lambda x: x.name.upper(), reverse=False)
     except OperationalError:
         return []
     else:
         choices = []
         for resource in resources:
-            if resource.disabled == False:
-                choices.append((resource.name, resource.name))
-
+            choices.append((resource.name, resource.name))
+            
         return choices
 
 CHOICES = make_choices()
@@ -58,10 +58,12 @@ class AdvancedForm(forms.Form):
                                            label_suffix='')
 
     disabled = forms.MultipleChoiceField(label='Disable resources',
-                                          widget=forms.SelectMultiple(attrs={'style': 'width: 100%'}),
-                                          help_text='Hold ctrl or shift (or drag with the mouse) to select more than one',
-                                          required=False,
-                                          choices=CHOICES)
+                                         widget=forms.SelectMultiple(attrs={'style': 'width: 100%', 'size': '15'}), 
+                                         help_text='Hold ctrl or shift (or drag with the mouse) to select more than one',
+                                         required=False,
+                                         choices=CHOICES)
+
+
                                           
                                           
     

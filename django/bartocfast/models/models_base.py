@@ -2,12 +2,12 @@
 
 import asyncio
 
-from django.db import models # https://docs.djangoproject.com/en/2.2/ref/models/fields/#django.db.models.Field
+from django.db import models 
 from aiohttp import ClientSession, ClientTimeout, ClientOSError
 
 from ..utility import Database, Entry, Result, LOCAL_APP_PATH
 
-class Query(models.Model): # confusing, same name as schema.Query
+class Query(models.Model): # not to be confused with schema.Query
     """ Abstract query class """
     
     querystring = models.CharField(max_length=100)
@@ -21,11 +21,11 @@ class Query(models.Model): # confusing, same name as schema.Query
 class Resource(models.Model):
     """ Abstract resource class """
 
-    federation = models.ForeignKey("Federation", on_delete=models.CASCADE) ### Federation.resource.all() should work... or not since related_name='resource',  does not work
+    federation = models.ForeignKey("Federation", on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     url = models.URLField()
     disabled = models.BooleanField(default=False)
-    context = models.CharField(max_length=200) #special, wildcard
+    context = models.CharField(max_length=200) # parameters: special, wildcard
 
     class Meta:
         abstract = True

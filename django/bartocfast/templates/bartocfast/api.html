@@ -12,31 +12,24 @@
 					<div class="invalid-feedback">Search word is required!</div>
 					<small class="form-text text-muted">{{ form.searchword.help_text }}</small>
 				</div>
-				
-			</div>
-			<div class="col-6">
 				<div class="form-group">
 					{{ form.maxsearchtime.label_tag }} {{ form.maxsearchtime }}
 					<div class="valid-feedback">Valid.</div>
 					<div class="invalid-feedback">Invalid input!</div>
 					<small class="form-text text-muted">{{ form.maxsearchtime.help_text }}</small>
 				</div>	
-			</div>
-		</div>	 
-		<div class="form-row">
-			<div class="col-6">
 				<div class="form-group">
 					{{ form.duplicates }} {{ form.duplicates.label_tag }}
 					<small class="form-text text-muted">{{ form.duplicates.help_text }}</small>
 				</div>	
-			</div>
+				<button type="submit" class="btn btn-primary">Search</button>
+			</div>	
 			<div class="col-6">
 				<div class="form-group">
 					{{ form.disabled.label_tag }} <br> {{ form.disabled }}
 					<small class="form-text text-muted">{{ form.disabled.help_text }}</small>
 				</div>
-			</div>	
-		</div>	
-	  <button type="submit" class="btn btn-primary">Search</button>
-  </form> 
+			</div>
+		</div>		  
+    </form> 
 {% endblock %}

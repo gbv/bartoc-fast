@@ -6,11 +6,10 @@ from typing import List, Set, Dict, Union
 
 import graphene
 from aiohttp import ClientSession, ClientTimeout
+from django.db.utils import OperationalError
 
-from .models import Federation, Resource, SkosmosInstance, SparqlEndpoint, LobidResource
-from .utility import Result, MappingDatabase, DEF_MAXSEARCHTIME, DEF_DISABLED # local
-
-RESOURCES = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all()) + list(LobidResource.objects.all())
+from .models import Federation, Resource, SkosmosInstance, SparqlEndpoint, LobidResource, LdapiEndpoint
+from .utility import Result, MappingDatabase, DEF_MAXSEARCHTIME, DEF_DISABLED
 
 class GlobalResult(graphene.ObjectType):
     """ Result of a global query """
@@ -19,19 +18,8 @@ class GlobalResult(graphene.ObjectType):
     prefLabel = graphene.String(description='http://www.w3.org/2004/02/skos/core#prefLabel')
     altLabel = graphene.String(description='http://www.w3.org/2004/02/skos/core#altLabel')
     hiddenLabel = graphene.String(description='http://www.w3.org/2004/02/skos/core#hiddenLabel')
-    # broader
-    # narrower
-    # related
-    # broadMatch
-    # closeMatch
-    # narrowMatch
-    # relatedMatch
-    # exactMatch
-    # note
     definition = graphene.String(description='http://www.w3.org/2004/02/skos/core#definition')
-    # inScheme
-    # topConceptOf
-    source = graphene.String(description='name of queried resource') # nb: purge deletes sources for doubles!
+    source = graphene.String(description='name of queried resource')
 
     def __eq__(self, other):
         """ Identity condition """ # https://stackoverflow.com/questions/4169252/remove-duplicates-in-list-of-object-with-python
@@ -79,19 +67,26 @@ class Query(graphene.ObjectType):
 
         start = time.time()                                 # dev
 
-        # initialize:
-        # should already be done... if not, update federation manually
-
-        # 
-
-        # access resources in federation:
-        resources = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all()) + list(LobidResource.objects.all()) ### 
-
-        # remove disabled resources
-        print(disabled) ###
-        resources = Helper.remove_disabled(resources, disabled)
-        print(resources) ###
-                            
+        # initialize resources in federation and remove disabled:
+        # case 1, views.basic:
+        if info.context == "basic":
+            resources = Helper.make_resources()
+            resources = Helper.remove_disabled(resources, disabled, info.context)
+        # case 2, views.advanced or views.api:
+        else:
+            disabled_masternames = []
+            for master in Helper.make_masters():
+                if master.name in disabled:
+                    disabled.remove(master.name)
+                    disabled_masternames.append(master.name)
+            resources = Helper.make_resources()
+            resources = Helper.remove_disabled(resources, disabled, info.context)
+            active_masternames = list(set(Helper.make_masternames()).difference(set(disabled_masternames)))
+            slaves = []
+            for mastername in active_masternames:
+                slaves = slaves + Helper.make_slaves(mastername)
+            resources = resources + slaves
+               
         end_init = time.time()                              # dev
         print(f'***INITIALIZE took {end_init - start}')     # dev
 
@@ -113,24 +108,107 @@ class Helper:
     """ Helper tools """
 
     @classmethod
-    def remove_disabled(self,
-                        resources: List[Resource],
-                        disabled: List[Resource]) -> List[Resource]:
+    def make_resources(self) -> List[Resource]:
+        """ Return list of all resources in federation """
+
+        try:
+            resources = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all()) + list(LobidResource.objects.all())
+            return resources
+        except OperationalError:
+            return []
+
+    @classmethod
+    def make_disabled(self) -> List[str]:
+        """ Return list of names of all disabled resources in federation """
+
+        disabled = []
+        for resource in self.make_resources():
+            if resource.disabled == True:
+                disabled.append(resource.name)
+
+        return disabled
+
+    @classmethod
+    def make_masters(self) -> List[Resource]:
+        """ Return list of master resources """
+
+        masters = []
+        ldapiendpoint = LdapiEndpoint(federation=Federation.objects.all()[0],
+                                      name="Research-Vocabularies-Australia",
+                                      url="https://vocabs.ands.org.au/",
+                                      disabled=True,
+                                      context="master")
+        masters.append(ldapiendpoint)
+
+        return masters
+
+    @classmethod
+    def make_masternames(self) -> List[str]:
+        """ Return list of names of master resources """
+
+        names = []
+        for master in self.make_masters():
+            names.append(master.name)
+
+        return names
+
+    @classmethod
+    def make_slaves(self, master: Resource = None) -> List[Resource]:
+        """ Return list of master's slave resources """
+
+        # dev: function is not properly implemented for lack of masters!
+
+        slaves = list(LdapiEndpoint.objects.all())
+
+        return slaves
+
+    @classmethod
+    def make_display_resources(self) -> List[Resource]:
+        """ Return list of all resources (incl. master) in federation """
+
+        masters = self.make_masters()
+        
+        try:
+            resources = list(SparqlEndpoint.objects.all()) + list(SkosmosInstance.objects.all()) + list(LobidResource.objects.all()) + masters
+            return resources
+
+        except OperationalError:
+            return []
+
+    @classmethod
+    def make_display_disabled(self) -> List[str]:
+        """ Return list of names of all disabled resources (incl. master) in federation"""
+
+        disabled = []
+        for resource in self.make_display_resources():
+            if resource.disabled == True:
+                disabled.append(resource.name)
+
+        return disabled
+
+    @classmethod
+    def remove_disabled(self, resources: List[Resource], disabled: List[str], context_value: str = None) -> List[Resource]:
         """ Remove disabled resources """
 
-        # disabled by maintenance.selfcheck
-        for resource in resources:
-            if resource.disabled == True: 
-                resources.remove(resource)
+        # case 1, automatic selection of resources (views.index):
+        print(context_value)
+        if context_value == "basic":
+            disabled = self.make_disabled()
+            while len(disabled) > 0:
+                for resource in resources:
+                    if resource.name in disabled:
+                        resources.remove(resource)
+                        disabled.remove(resource.name)
+            return resources
 
-        # manually disabled by user
-        while len(disabled) > 0:
-            for resource in resources:
-                if resource.name in disabled:
-                    resources.remove(resource)
-                    disabled.remove(resource.name)
-
-        return resources
+        # case 2, manual selection of resources (views.advanced, views.api):
+        else:
+            while len(disabled) > 0:
+                for resource in resources:
+                    if resource.name in disabled:
+                        resources.remove(resource)
+                        disabled.remove(resource.name)
+            return resources
 
     @classmethod
     async def fetch(self,
@@ -186,6 +264,10 @@ class Normalize:
         for resource in LobidResource.objects.all():
             lobidnames.append(resource.name)
 
+        ldapinames = []
+        for resource in LdapiEndpoint.objects.all():
+            ldapinames.append(resource.name)
+
         if result.data == None: # here we catch timed out resources
             return []
         elif result.name in skosmosnames:
@@ -194,6 +276,8 @@ class Normalize:
             return self.normalize_sparql(result)
         elif result.name in lobidnames:
             return self.normalize_lobid(result)
+        elif result.name in ldapinames:
+            return self.normalize_ldapi(result)
         else:
             raise NameError
 
@@ -318,6 +402,56 @@ class Normalize:
                 globalresult.source = result.name
                 normalized.append(globalresult)
                     
+            howmany = len(normalized) # dev
+            merged = self.merge(normalized)
+            print(f'{result.name} has {howmany - len(merged)} duplicates and {len(merged)} unique results') # dev
+            return merged
+
+    @classmethod
+    def normalize_ldapi(self, result: Result) -> List[GlobalResult]:
+        """ Normalize Linked-Data-API data """
+
+        try:
+            result.data['result']['items']
+            assert(len(result.data['result']['items']) is not 0)
+        except KeyError:
+            print(f'ERROR: Something is wrong with Normalize.normalize_ldapi {result.name}!')
+            return []
+        except AssertionError:
+            print(f'{result.name} has no results!')
+            return []  
+        else:
+            normalized = []
+            for entry in result.data['result']['items']:
+                globalresult = GlobalResult()
+        
+                try:
+                    entry['_about']
+                except (KeyError, TypeError):
+                    continue
+                else:
+                    setattr(globalresult, 'uri', entry['_about'])
+
+                try:
+                    entry['prefLabel']['_value']
+                except (KeyError, TypeError):
+                    continue
+                else:
+                    setattr(globalresult, 'prefLabel', entry['prefLabel']['_value'])
+
+                try:
+                    entry['definition']
+                except (KeyError, TypeError):
+                    setattr(globalresult, 'definition', None)
+                else:
+                    setattr(globalresult, 'definition', entry['definition'])
+                    
+                setattr(globalresult, 'altLabel', None)
+                setattr(globalresult, 'hiddenLabel', None)
+                setattr(globalresult, 'source', result.name)
+    
+                normalized.append(globalresult)
+
             howmany = len(normalized) # dev
             merged = self.merge(normalized)
             print(f'{result.name} has {howmany - len(merged)} duplicates and {len(merged)} unique results') # dev

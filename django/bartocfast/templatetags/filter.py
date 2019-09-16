@@ -2,13 +2,13 @@ from typing import List, Set, Dict, Tuple, Optional, Union
 
 from django import template
 
-from ..models import SkosmosInstance, SparqlEndpoint, LobidResource
+from ..models import Resource, SkosmosInstance, SparqlEndpoint, LobidResource, LdapiEndpoint
 from ..utility import VERSION
 
 register = template.Library()
 
 @register.filter
-def get_type(resource: Union[SkosmosInstance, SparqlEndpoint]) -> str:
+def get_type(resource: Resource) -> str:
     """ Return the type of a resource"""
     
     if isinstance(resource, SkosmosInstance):
@@ -17,6 +17,8 @@ def get_type(resource: Union[SkosmosInstance, SparqlEndpoint]) -> str:
         return "SPARQL"
     if isinstance(resource, LobidResource):
         return "lobid-gnd API"
+    if isinstance(resource, LdapiEndpoint):
+        return "Linked-Data-API"
 
 @register.filter
 def get_len(thing: object) -> int:
