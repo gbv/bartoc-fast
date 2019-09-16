@@ -195,7 +195,10 @@ class Maintenance:
         """ Populate federation with Linked-Data-API endpoints and their queries """
 
         self.prepare_ldapiendpoints()
-        LdapiEndpoint.objects.all().delete()
+        try:
+            LdapiEndpoint.objects.all().delete()
+        except:
+            pass
         
         ldapiendpoints = load_workbook(LOCAL_APP_PATH + "/fixtures/ldapiendpoints.xlsx")
         for ws in ldapiendpoints:
